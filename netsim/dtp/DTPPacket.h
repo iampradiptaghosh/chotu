@@ -11,8 +11,8 @@ class DTPPacket : public Packet {
 	// DTPPacket();
 	// ~DTPPacket();
 	int sync_bit;
-    int term_connection;
+        int term_connection;
 	void print();
 	void print_header();
-    unsigned char data[PAYLOAD_SIZE];
+        unsigned char data[PAYLOAD_SIZE];
 };
