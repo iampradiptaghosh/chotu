@@ -1,0 +1,5 @@
+[N.B]
+1. The initial RTO is set to be 3000, because it was sufficient enough for my own test cases.
+But if the RTT increases, you may need to set the initial RTO to some higher value for the program to run properly 
+under very lossy conditions.
+2. The FIN signal from sender side is sent immediately after it receives the SYN-ACK from receiver and sends ACK.

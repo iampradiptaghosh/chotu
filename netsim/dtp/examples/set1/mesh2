@@ -1,0 +1,49 @@
+#Mesh Topology
+
+Link(1, 17, 10, 1)
+Link(2, 17, 10, 1)
+Link(3, 17, 10, 1)
+Link(4, 17, 10, 1)
+
+Link(5, 1, 10, 1)
+Link(6, 1, 10, 1)
+Link(7, 1, 10, 1)
+Link(8, 2, 10, 1)
+Link(9, 2, 10, 1)
+Link(10, 2, 10, 1)
+Link(11, 3, 10, 1)
+Link(12, 3, 10, 1)
+Link(13, 3, 10, 1)
+Link(14, 4, 10, 1)
+Link(15, 4, 10, 1)
+Link(16, 4, 10, 1)
+
+
+# Routers are nodes 1,2, 3, 4
+Router(1, 1)
+Router(2, 1)
+Router(3, 1)
+Router(4, 1)
+Router(17, 1)
+
+# Hosts 
+Host(5)
+Host(6)
+Host(7)
+Host(8)
+Host(9)
+Host(10)
+Host(11)
+Host(12)
+Host(13)
+Host(14)
+Host(15)
+Host(16)
+
+# Flow goes from node 1 to node 6 starting at 10 s and sending file "test1.txt"
+FDTPFlow(5, 11, 10, "test1.txt")
+FDTPFlow(6, 12, 10, "test1.txt")
+FDTPFlow(7, 13, 10, "test1.txt")
+FDTPFlow(8, 15, 10, "test1.txt")
+FDTPFlow(9, 14, 10, "test1.txt")
+FDTPFlow(10, 16, 10, "test1.txt")

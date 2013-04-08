@@ -1,0 +1,42 @@
+Initialized router with address 1
+ <0, Router::Router(Address, int)>
+Initialized router with address 2
+ <0, Router::Router(Address, int)>
+Initialized router with address 3
+ <0, Router::Router(Address, int)>
+Initialized router with address 4
+ <0, Router::Router(Address, int)>
+Initialized router with address 5
+ <0, Router::Router(Address, int)>
+Initialized host with address 6
+ <0, Host::Host(Address)>
+Initialized host with address 7
+ <0, Host::Host(Address)>
+Initialized host with address 10
+ <0, Host::Host(Address)>
+Initialized host with address 11
+ <0, Host::Host(Address)>
+Initialized host with address 8
+ <0, Host::Host(Address)>
+Initialized host with address 9
+ <0, Host::Host(Address)>
+Initialized host with address 12
+ <0, Host::Host(Address)>
+Initialized host with address 13
+ <0, Host::Host(Address)>
+Established FDTP flow from 11 to 8 (2427)
+ <2427, virtual void Host::receive(Packet*)>
+Established FDTP flow from 7 to 12 (2619)
+ <2619, virtual void Host::receive(Packet*)>
+Established FDTP flow from 10 to 9 (3821)
+ <3821, virtual void Host::receive(Packet*)>
+Established FDTP flow from 6 to 13 (4013)
+ <4013, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 7 to 12 (4619)
+ <4619, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 6 to 13 (7013)
+ <7013, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 11 to 8 (7235)
+ <7235, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 10 to 9 (9437)
+ <9437, virtual void Host::receive(Packet*)>

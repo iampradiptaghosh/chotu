@@ -1,0 +1,14 @@
+Initialized router with address 2
+ <0, Router::Router(Address, int)>
+Initialized router with address 3
+ <0, Router::Router(Address, int)>
+Initialized router with address 4
+ <0, Router::Router(Address, int)>
+Initialized host with address 1
+ <0, Host::Host(Address)>
+Initialized host with address 5
+ <0, Host::Host(Address)>
+Established FDTP flow from 1 to 5 (2434)
+ <2434, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 1 to 5 (4434)
+ <4434, virtual void Host::receive(Packet*)>

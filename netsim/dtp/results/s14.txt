@@ -1,0 +1,412 @@
+Initialized router with address 1
+ <0, Router::Router(Address, int)>
+Initialized router with address 2
+ <0, Router::Router(Address, int)>
+Initialized router with address 3
+ <0, Router::Router(Address, int)>
+Initialized router with address 4
+ <0, Router::Router(Address, int)>
+Initialized router with address 5
+ <0, Router::Router(Address, int)>
+Initialized router with address 6
+ <0, Router::Router(Address, int)>
+Initialized host with address 7
+ <0, Host::Host(Address)>
+Initialized host with address 8
+ <0, Host::Host(Address)>
+Initialized host with address 9
+ <0, Host::Host(Address)>
+Initialized host with address 10
+ <0, Host::Host(Address)>
+Initialized host with address 11
+ <0, Host::Host(Address)>
+Initialized host with address 12
+ <0, Host::Host(Address)>
+Initialized host with address 13
+ <0, Host::Host(Address)>
+Initialized host with address 14
+ <0, Host::Host(Address)>
+Initialized host with address 15
+ <0, Host::Host(Address)>
+Initialized host with address 16
+ <0, Host::Host(Address)>
+Initialized host with address 17
+ <0, Host::Host(Address)>
+Initialized host with address 18
+ <0, Host::Host(Address)>
+Sent packet from DTP-Host: 7
+ <5, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 7, destination: 18, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <5, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 8
+ <5, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 8, destination: 9, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <5, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 10
+ <5, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 10, destination: 17, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <5, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 11
+ <5, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 11, destination: 13, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <5, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 12
+ <5, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 12, destination: 14, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <5, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 15
+ <5, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 15, destination: 16, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <5, void DTPPacket::print_header()>
+Received packet at DTP-Host: 9
+ <409, virtual void Host::receive(Packet*)>
+Packet Header:: source: 8, destination: 9, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <409, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 9
+ <409, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 9, destination: 8, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <409, void DTPPacket::print_header()>
+Received packet at DTP-Host: 18
+ <813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 7, destination: 18, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 18
+ <813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 18, destination: 7, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 8
+ <813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 9, destination: 8, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 8
+ <813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 8, destination: 9, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 8
+ <813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 8, destination: 9, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 13
+ <1005, virtual void Host::receive(Packet*)>
+Packet Header:: source: 11, destination: 13, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <1005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 13
+ <1005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 13, destination: 11, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <1005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 17
+ <1005, virtual void Host::receive(Packet*)>
+Packet Header:: source: 10, destination: 17, id: 1, length: 24, Sync_bit: 1, Termination_bit: 0
+ <1005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 17
+ <1005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 17, destination: 10, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <1005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 9
+ <1217, virtual void Host::receive(Packet*)>
+Packet Header:: source: 8, destination: 9, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <1217, void DTPPacket::print_header()>
+Established FDTP flow from 8 to 9 (1217)
+ <1217, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 9
+ <1409, virtual void Host::receive(Packet*)>
+Packet Header:: source: 8, destination: 9, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <1409, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 9
+ <1409, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 9, destination: 8, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <1409, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 9
+ <1409, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 9, destination: 8, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <1409, void DTPPacket::print_header()>
+Received packet at DTP-Host: 7
+ <1621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 18, destination: 7, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <1621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 7
+ <1621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 7, destination: 18, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <1621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 7
+ <1621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 7, destination: 18, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <1621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 11
+ <1813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 13, destination: 11, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <1813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 11
+ <1813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 11, destination: 13, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <1813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 11
+ <1813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 11, destination: 13, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <1813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 8
+ <1813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 9, destination: 8, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <1813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 10
+ <2005, virtual void Host::receive(Packet*)>
+Packet Header:: source: 17, destination: 10, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <2005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 10
+ <2005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 10, destination: 17, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <2005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 10
+ <2005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 10, destination: 17, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <2005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 8
+ <2005, virtual void Host::receive(Packet*)>
+Packet Header:: source: 9, destination: 8, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <2005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 8
+ <2005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 8, destination: 9, id: 4, length: 24, Sync_bit: 3, Termination_bit: 4
+ <2005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 9
+ <2409, virtual void Host::receive(Packet*)>
+Packet Header:: source: 8, destination: 9, id: 4, length: 24, Sync_bit: 3, Termination_bit: 4
+ <2409, void DTPPacket::print_header()>
+Tore down FDTP flow from 8 to 9 (2409)
+ <2409, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 18
+ <2429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 7, destination: 18, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <2429, void DTPPacket::print_header()>
+Established FDTP flow from 7 to 18 (2429)
+ <2429, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 13
+ <2621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 11, destination: 13, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <2621, void DTPPacket::print_header()>
+Established FDTP flow from 11 to 13 (2621)
+ <2621, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 18
+ <2621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 7, destination: 18, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <2621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 18
+ <2621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 18, destination: 7, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <2621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 18
+ <2621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 18, destination: 7, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <2621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 17
+ <2813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 10, destination: 17, id: 2, length: 24, Sync_bit: 3, Termination_bit: 0
+ <2813, void DTPPacket::print_header()>
+Established FDTP flow from 10 to 17 (2813)
+ <2813, virtual void Host::receive(Packet*)>
+Sent packet from DTP-Host: 12
+ <3005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 12, destination: 14, id: 2, length: 24, Sync_bit: 1, Termination_bit: 0
+ <3005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 15
+ <3005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 15, destination: 16, id: 2, length: 24, Sync_bit: 1, Termination_bit: 0
+ <3005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 17
+ <3005, virtual void Host::receive(Packet*)>
+Packet Header:: source: 10, destination: 17, id: 3, length: 24, Sync_bit: 3, Termination_bit: 1
+ <3005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 17
+ <3005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 17, destination: 10, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <3005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 17
+ <3005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 17, destination: 10, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <3005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 7
+ <3429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 18, destination: 7, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <3429, void DTPPacket::print_header()>
+Received packet at DTP-Host: 7
+ <3621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 18, destination: 7, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <3621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 7
+ <3621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 7, destination: 18, id: 4, length: 24, Sync_bit: 3, Termination_bit: 4
+ <3621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 14
+ <3813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 12, destination: 14, id: 2, length: 24, Sync_bit: 1, Termination_bit: 0
+ <3813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 14
+ <3813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 14, destination: 12, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <3813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 16
+ <3813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 15, destination: 16, id: 2, length: 24, Sync_bit: 1, Termination_bit: 0
+ <3813, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 16
+ <3813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 16, destination: 15, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <3813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 10
+ <3813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 17, destination: 10, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <3813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 10
+ <4005, virtual void Host::receive(Packet*)>
+Packet Header:: source: 17, destination: 10, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <4005, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 10
+ <4005, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 10, destination: 17, id: 4, length: 24, Sync_bit: 3, Termination_bit: 4
+ <4005, void DTPPacket::print_header()>
+Received packet at DTP-Host: 18
+ <4429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 7, destination: 18, id: 4, length: 24, Sync_bit: 3, Termination_bit: 4
+ <4429, void DTPPacket::print_header()>
+Tore down FDTP flow from 7 to 18 (4429)
+ <4429, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 12
+ <4621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 14, destination: 12, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <4621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 12
+ <4621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 12, destination: 14, id: 3, length: 24, Sync_bit: 3, Termination_bit: 0
+ <4621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 12
+ <4621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 12, destination: 14, id: 4, length: 24, Sync_bit: 3, Termination_bit: 1
+ <4621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 15
+ <4621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 16, destination: 15, id: 1, length: 24, Sync_bit: 2, Termination_bit: 0
+ <4621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 15
+ <4621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 15, destination: 16, id: 3, length: 24, Sync_bit: 3, Termination_bit: 0
+ <4621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 15
+ <4621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 15, destination: 16, id: 4, length: 24, Sync_bit: 3, Termination_bit: 1
+ <4621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 11
+ <4813, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 11, destination: 13, id: 4, length: 24, Sync_bit: 3, Termination_bit: 1
+ <4813, void DTPPacket::print_header()>
+Received packet at DTP-Host: 17
+ <4813, virtual void Host::receive(Packet*)>
+Packet Header:: source: 10, destination: 17, id: 4, length: 24, Sync_bit: 3, Termination_bit: 4
+ <4813, void DTPPacket::print_header()>
+Tore down FDTP flow from 10 to 17 (4813)
+ <4813, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 14
+ <5429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 12, destination: 14, id: 3, length: 24, Sync_bit: 3, Termination_bit: 0
+ <5429, void DTPPacket::print_header()>
+Established FDTP flow from 12 to 14 (5429)
+ <5429, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 16
+ <5429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 15, destination: 16, id: 3, length: 24, Sync_bit: 3, Termination_bit: 0
+ <5429, void DTPPacket::print_header()>
+Established FDTP flow from 15 to 16 (5429)
+ <5429, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 13
+ <5621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 11, destination: 13, id: 4, length: 24, Sync_bit: 3, Termination_bit: 1
+ <5621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 13
+ <5621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 13, destination: 11, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <5621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 13
+ <5621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 13, destination: 11, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <5621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 16
+ <5621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 15, destination: 16, id: 4, length: 24, Sync_bit: 3, Termination_bit: 1
+ <5621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 16
+ <5621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 16, destination: 15, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <5621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 16
+ <5621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 16, destination: 15, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <5621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 11
+ <6429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 13, destination: 11, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <6429, void DTPPacket::print_header()>
+Received packet at DTP-Host: 15
+ <6429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 16, destination: 15, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <6429, void DTPPacket::print_header()>
+Received packet at DTP-Host: 11
+ <6621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 13, destination: 11, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <6621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 11
+ <6621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 11, destination: 13, id: 5, length: 24, Sync_bit: 3, Termination_bit: 4
+ <6621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 15
+ <6621, virtual void Host::receive(Packet*)>
+Packet Header:: source: 16, destination: 15, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <6621, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 15
+ <6621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 15, destination: 16, id: 5, length: 24, Sync_bit: 3, Termination_bit: 4
+ <6621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 13
+ <7429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 11, destination: 13, id: 5, length: 24, Sync_bit: 3, Termination_bit: 4
+ <7429, void DTPPacket::print_header()>
+Tore down FDTP flow from 11 to 13 (7429)
+ <7429, virtual void Host::receive(Packet*)>
+Received packet at DTP-Host: 16
+ <7429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 15, destination: 16, id: 5, length: 24, Sync_bit: 3, Termination_bit: 4
+ <7429, void DTPPacket::print_header()>
+Tore down FDTP flow from 15 to 16 (7429)
+ <7429, virtual void Host::receive(Packet*)>
+Sent packet from DTP-Host: 12
+ <7621, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 12, destination: 14, id: 5, length: 24, Sync_bit: 3, Termination_bit: 1
+ <7621, void DTPPacket::print_header()>
+Received packet at DTP-Host: 14
+ <8429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 12, destination: 14, id: 5, length: 24, Sync_bit: 3, Termination_bit: 1
+ <8429, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 14
+ <8429, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 14, destination: 12, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <8429, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 14
+ <8429, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 14, destination: 12, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <8429, void DTPPacket::print_header()>
+Received packet at DTP-Host: 12
+ <9237, virtual void Host::receive(Packet*)>
+Packet Header:: source: 14, destination: 12, id: 2, length: 24, Sync_bit: 3, Termination_bit: 2
+ <9237, void DTPPacket::print_header()>
+Received packet at DTP-Host: 12
+ <9429, virtual void Host::receive(Packet*)>
+Packet Header:: source: 14, destination: 12, id: 3, length: 24, Sync_bit: 3, Termination_bit: 3
+ <9429, void DTPPacket::print_header()>
+Sent packet from DTP-Host: 12
+ <9429, virtual void Host::handle_timer(void*)>
+Packet Header:: source: 12, destination: 14, id: 6, length: 24, Sync_bit: 3, Termination_bit: 4
+ <9429, void DTPPacket::print_header()>
+Received packet at DTP-Host: 14
+ <10237, virtual void Host::receive(Packet*)>
+Packet Header:: source: 12, destination: 14, id: 6, length: 24, Sync_bit: 3, Termination_bit: 4
+ <10237, void DTPPacket::print_header()>
+Tore down FDTP flow from 12 to 14 (10237)
+ <10237, virtual void Host::receive(Packet*)>

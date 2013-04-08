@@ -1,0 +1,79 @@
+//
+// The NodeMap data structure maintains a mapping between an address and a
+// Node pointer. It uses an STL "map".
+//
+
+typedef map<Address, Node*, ltAddress> NodeMap;
+typedef map<Address, Node*, ltAddress>::iterator NodeMapIterator;
+typedef pair<Address, Node*> NodeMapPair;
+
+//
+// The PacketScheduler remembers the packet, where it came from, and
+// where it is going to, in the PacketData structure. This information
+// is necessary because the PacketScheduler needs to schedule packet
+// delivery at different times, and depending upon the propagation and
+// transmission latencies of the packet.
+//
+
+class PacketData {
+
+    friend class PacketScheduler;
+
+ private:
+    Node* 	node;
+    Packet*	packet;
+    Address	nexthop;
+    bool	trans;		// Signals end of transmission at node
+
+ public:
+    PacketData(Node* n, Packet* p, Address nh, bool t);
+    ~PacketData();
+};
+
+//
+// A PacketMap is an STL multimap data structure that contains the
+// claims act which packets are scheduled to be delivered across a
+// link. PacketScheduler uses this to implement the discrete event
+// engine for packet delivery.
+//
+
+typedef multimap<Time, PacketData*, ltTime> PacketMap;
+typedef multimap<Time, PacketData*, ltTime>::iterator PacketMapIterator;
+typedef pair<Time, PacketData*> PacketMapPair;
+
+//
+// This class is part of the Scheduler. It maintains packet events
+// and ensures packet delivery at the appropriate times. (Packets
+// represent one-type of discrete event in the system).
+//
+
+class PacketScheduler  {
+
+    friend class Scheduler;
+
+public:
+    PacketScheduler();				// Constructor
+    ~PacketScheduler();
+
+    // Send 'packet' to 'nexthop': PacketScheduler correctly emulates latency
+    void send_packet(Packet* packet,			// The packet to send
+                     Address nexthop,			// Address of nexthop
+                     Node* node);			// Sender 
+
+    // Register to receive packets
+    void register_to_receive(Node* node,	// Pointer to node object
+                             Address addr);	// Address for which to receive
+
+    // Time of next event; return -1 if none
+    Time next_packet();
+
+    // Process next event; return -1 if no event processed
+    void process_packet();
+
+    // Get node object corresponding to address
+    Node* get_node(Address addr);		// Address of object
+
+private:
+    NodeMap	node_map;	// address to node mapping
+    PacketMap	packet_map;	// sorted map of packet events
+};

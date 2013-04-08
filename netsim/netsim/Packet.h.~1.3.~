@@ -1,0 +1,22 @@
+#include <cstdio>
+
+//
+// The Packet class describes the actual data that is transmitted
+// between nodes. It has several fields that are analogous to fields
+// in the IP header. The "data" field contains the payload of the IP
+// packet. 
+//
+
+class Packet {
+ public:
+    Packet() {
+    };
+    ~Packet() {
+        delete data;
+    }
+    Address 		source;		// Sender node address
+    Address		destination;	// Destination node address
+    unsigned int	length;		// Total length, in bytes
+    unsigned int	id;		// Packet id, for debugging
+    char*		data;		// Pointer to data
+};

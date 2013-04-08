@@ -1,0 +1,47 @@
+#		      6   7       8   9
+#		      |   |       |   |
+# Dumb bell topology: 1 - 2 - 3 - 4 - 5
+#		      |   |       |   |
+#		      10  11      12  13
+
+Link(1, 2, 10, 1)
+Link(2, 3, 10, 1)
+Link(3, 4, 10, 1)
+Link(4, 5, 10, 1)
+Link(6, 1, 10, 1)
+Link(7, 2, 10, 1)
+Link(8, 4, 10, 1)
+Link(9, 5, 10, 1)
+Link(10, 1, 10, 1)
+Link(11, 2, 10, 1)
+Link(12, 4, 10, 1)
+Link(13, 5, 10, 1)
+
+# Routers are nodes 1, 2, 3, 4 and 5
+Router(1, 1)
+Router(2, 1)
+Router(3, 1)
+Router(4, 1)
+Router(5, 1)
+
+# Hosts 6, 7, 10 and 11 are Senders, hosts 8, 9, 12 and 13 are Receivers
+Host(6)
+Host(7)
+Host(10)
+Host(11)
+Host(8)
+Host(9)
+Host(12)
+Host(13)
+
+# Flow goes from node 6 to node 13 starting at 5 s and sending file "test1.txt"
+FDTPFlow(6, 13, 5, "test1.txt")
+
+# Flow goes from node 7 to node 12 starting at 5 s and sending file "test2.txt"
+FDTPFlow(7, 12, 5, "test2.txt")
+
+# Flow goes from node 10 to node 9 starting at 3 s and sending file "test3.txt"
+FDTPFlow(10, 9, 3, "test3.txt")
+
+# Flow goes from node 11 to node 8 starting at 3 s and sending file "test4.txt"
+FDTPFlow(11, 8, 3, "test4.txt")

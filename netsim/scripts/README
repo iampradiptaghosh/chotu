@@ -1,0 +1,30 @@
+These tools may help you to extract data from your TCP simulation trace.
+If you have any questions, please send an email to kjang@usc.edu.
+
+Install : Compile 'gen.c' and 'queue.c'
+	> gcc -o gen gen.c
+	> gcc -o queue queue.c
+
+STEP1 : Generate a simulation trace.
+	> ./netsim_app -f CONFIGURATION_FILE_NAME 2>TRACE
+
+STEP2 : Extract a TCP Node output from the trace file
+	The following command will generate 'NODE_NUMBER.tmp', 'NODE_NUMBER.send' and 'NODE_NUMBER.recv' files
+	> ./extract.sh TRACE NODE_NUMBER
+
+STEP3 : Use 'gen' to extract data(CWND, SST, SUNA, SNXT, RTO, RTT, SEND and RECV) from 'NODE_NUMBER.tmp' file 
+	> ./gen NODE_NUMBER.tmp CWND > NODE_NUMBER.cwnd
+        > ./gen NODE_NUMBER.tmp SST  > NODE_NUMBER.sst
+        > ./gen NODE_NUMBER.tmp SUNA > NODE_NUMBER.suna
+        > ./gen NODE_NUMBER.tmp SNXT > NODE_NUMBER.snxt
+        > ./gen NODE_NUMBER.tmp RTO  > NODE_NUMBER.rto
+        > ./gen NODE_NUMBER.tmp RTT  > NODE_NUMBER.rtt
+        > ./gen NODE_NUMBER.tmp SEND > NODE_NUMBER.sseq
+        > ./gen NODE_NUMBER.tmp RECV > NODE_NUMBER.rseq
+
+STEP4 : To see the queue size, use 'queue'
+	> ./queue TRACE NODE_NUMBER1 NODE_NUMBER2 > NODE_NUMBER1-NODE_NUMBER2.queue
+
+STEP5 : Average throughput per connection. 'throughput.sh' requires 'NODE_NUMBER.send' file. 
+	> ./throughput.sh NODE_NUMBER
+

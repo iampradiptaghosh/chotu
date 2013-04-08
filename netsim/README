@@ -1,0 +1,61 @@
+Netsim
+------
+
+Netsim is a discrete event simulation framework on top of which many
+networking protocols can be simulated. It's primary goal is to serve
+as a platform on which networking students can implement, debug, and
+understand the dynamics of a variety of network protocols.
+
+It is not intended for use as a full-fledged network simulator. Use
+ns-2 or glomosim or qualnet for that.
+
+INSTALLATION
+------------
+
+1. Untar the distribution at any location using:
+
+	% tar zxvf netsim.tgz
+
+2. Compile the distribution as follows:
+
+	% cd netsim/cbr_app
+	% make depend  		# Ignore warning messages
+	% make
+
+3. If all goes well, you should be able to run a simple simulation as
+follows (assuming a bash shell):
+
+	% ./netsim_app -f examples/chain 2> /tmp/trace
+
+If you examine the trace file "/tmp/trace", you should see loads of
+output.
+
+UNDERSTANDING THE CODE
+----------------------
+
+The core of the simulator is in the "netsim" directory. Each
+individual file is briefly commented, so you will have to read the
+code to understand what each component does. The file
+"components.pdf" in this directory should give you an idea of the
+relationships between the various classes.
+
+I would recommend printing out the code and reading it carefully to
+understand what each C++ class does. Start from Scheduler, and read
+PacketScheduler and Timer: these three files implement the heart of
+the discrete-event engine. Topology implements the routing algorithms,
+while FIFONode implements a router with a bounded packet queue. You
+may also need to familiarize yourself with the C++ Standard Template
+Library (at http://www.sgi.com/tech/stl/).
+
+Look at the "cbr_app" directory and familiarize yourself with our
+implementation of the constant bit rate (CBR) transmission protocol.
+As part of this, you should also understand the configuration language
+in Netsim. See the "examples" sub-directory for examples of how to
+configure a network using Netsim, and how to start the CBR sender and
+receiver.
+
+A good way to get familiar with the code and how the simulator works
+is to run the cbr_app code, examine the trace output (using the
+example above), and single step through the code using the Gnu
+debugger "gdb".
+

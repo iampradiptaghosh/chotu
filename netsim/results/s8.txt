@@ -1,0 +1,56 @@
+Initialized router with address 1
+ <0, Router::Router(Address, int)>
+Initialized router with address 2
+ <0, Router::Router(Address, int)>
+Initialized router with address 3
+ <0, Router::Router(Address, int)>
+Initialized router with address 4
+ <0, Router::Router(Address, int)>
+Initialized host with address 5
+ <0, Host::Host(Address)>
+Initialized host with address 6
+ <0, Host::Host(Address)>
+Initialized host with address 7
+ <0, Host::Host(Address)>
+Initialized host with address 8
+ <0, Host::Host(Address)>
+Initialized host with address 9
+ <0, Host::Host(Address)>
+Initialized host with address 10
+ <0, Host::Host(Address)>
+Initialized host with address 11
+ <0, Host::Host(Address)>
+Initialized host with address 12
+ <0, Host::Host(Address)>
+Initialized host with address 13
+ <0, Host::Host(Address)>
+Initialized host with address 14
+ <0, Host::Host(Address)>
+Initialized host with address 15
+ <0, Host::Host(Address)>
+Initialized host with address 16
+ <0, Host::Host(Address)>
+Established FDTP flow from 8 to 15 (2434)
+ <2434, virtual void Host::receive(Packet*)>
+Established FDTP flow from 5 to 11 (2616)
+ <2616, virtual void Host::receive(Packet*)>
+Established FDTP flow from 9 to 14 (2626)
+ <2626, virtual void Host::receive(Packet*)>
+Established FDTP flow from 6 to 12 (2808)
+ <2808, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 6 to 12 (4808)
+ <4808, virtual void Host::receive(Packet*)>
+Established FDTP flow from 7 to 13 (5616)
+ <5616, virtual void Host::receive(Packet*)>
+Established FDTP flow from 10 to 16 (5626)
+ <5626, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 8 to 15 (7242)
+ <7242, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 5 to 11 (7616)
+ <7616, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 9 to 14 (10146)
+ <10146, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 7 to 13 (10520)
+ <10520, virtual void Host::receive(Packet*)>
+Tore down FDTP flow from 10 to 16 (10530)
+ <10530, virtual void Host::receive(Packet*)>

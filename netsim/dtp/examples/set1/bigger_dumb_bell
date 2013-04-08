@@ -1,0 +1,19 @@
+# Dumbell topology: 1 & 2 & 3 - 4 - 5 - 6 & 7 & 8
+Link(1, 4, 10, 2)
+Link(2, 4, 10, 2)
+Link(3, 4, 10, 2)
+Link(4, 5, 1, 1)
+Link(5, 6, 10, 2)
+Link(5, 7, 10, 2)
+Link(5, 8, 10, 2)
+
+# Node 1 and 2 and 3 are Senders, node 6 and 7 and 8 are receivers
+# Node 4 is a drop tail router
+CbrSender(1, 6, 50, 500, 50)
+CbrSender(2, 7, 50, 500, 50)
+CbrSender(3, 8, 50, 500, 50)
+CbrReceiver(6)
+CbrReceiver(7)
+CbrReceiver(8)
+FIFONode(4, 40)
+FIFONode(5, 40)
