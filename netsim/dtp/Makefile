@@ -45,6 +45,7 @@ Host.o: ../netsim/common.h /usr/include/stdlib.h /usr/include/features.h
 Host.o: /usr/include/alloca.h ../netsim/Node.h ../netsim/FIFONode.h
 Host.o: ../netsim/Packet.h DTPPacket.h ../netsim/PacketScheduler.h
 Host.o: ../netsim/Timer.h ../netsim/Scheduler.h Host.h Router.h
+Host.o: /usr/include/string.h /usr/include/xlocale.h
 DTPPacket.o: ../netsim/common.h /usr/include/stdlib.h /usr/include/features.h
 DTPPacket.o: /usr/include/alloca.h ../netsim/Node.h ../netsim/FIFONode.h
 DTPPacket.o: ../netsim/Packet.h DTPPacket.h ../netsim/Timer.h

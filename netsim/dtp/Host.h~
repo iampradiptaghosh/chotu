@@ -1,4 +1,6 @@
+#include <fstream>
 class FIFONode;
+class DTPPacket;
 #define MAX 99999;
 typedef struct 
 {
@@ -17,19 +19,22 @@ class Host : public FIFONode {
  public:
     Host(Address a);
     ~Host();
-    void get_dest(Packet* pkt);
+        void get_dest(Packet* pkt);
 	void handle_timer(void* cookie);
     // Receive packet and prints its length
     //void sync(Packet* pkt);
-	void receive(Packet* pkt);		// Incoming packet
+	void receive(Packet* pkt);
+	void send_file(Packet* pkt);			// Incoming packet
 	void sync();
 	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
 	int sync_bit;
 	int term_bit;
 	int     retrans_bit;
-	
+	int packets_in_window;
 	SendMap dest_map;
+	ifstream in_file;
+	ofstream out_file;
 	//int dest[MAX];
 	//int dest_count,dest_pointer;
  private:

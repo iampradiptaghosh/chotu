@@ -16,7 +16,7 @@ FDTPFlow::FDTPFlow(Address a, Address d,Time s, char* f)
 {
    // NodeMap	node_map;
 	Node* nd = (scheduler->get_node)(a);
-	(((Host*)nd)->insert_p)(s,d,f);
+	(((Host*)nd)->insert_p)(s,d,(char*)f);
 	(((Host*)nd)->set_timer)(s,NULL);
 //	(((Host*)nd)->sync)();
 	/* while(!(((Host*)nd)->sync_bit))

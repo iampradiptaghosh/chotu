@@ -8,16 +8,19 @@
 #include "../netsim/Scheduler.h"
 #include "Host.h"
 #include "Router.h"
+#include <iostream>
+#include <fstream>
 #include <string.h>
-
+#include <string>
 #define MAX_QUEUE 99999
-#define timeout 4000
+#define timeout 4000000
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
    sync_bit=1;
    term_bit=0;
    retrans=0;
    retrans_bit=0;
+   packets_in_window=0;
    retrans_timer=timeout;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
@@ -72,7 +75,9 @@ Host::receive(Packet* pkt)
 			//fprintf(stderr,"Got SYN-ACK, node %d\n",address());	
 			handle_timer((void*)1);
 			TRACE(TRL4,"(Time:%d) node %d Sent ACK to node %d\n",scheduler->time(),address(),destination);
-			terminate(destination);
+			send_file();
+			
+			//terminate(destination);
 			
 			
 		
@@ -93,7 +98,8 @@ Host::receive(Packet* pkt)
 				TRACE(TRL4,"(Time:%d) node %d Got ACK from node %d\n",scheduler->time(),address(),destination);
 			
 				TRACE(TRL3, "Established FDTP flow from %d to %d (%d)\n",  destination,address(),tm);
-				term_bit=1;
+				out_file.open("example.txt", ios::out);
+				//term_bit=1;
 				
 			/* 	Node* nd = (scheduler->get_node)(destination);
 				((Host*)nd)->terminate(address()); */
@@ -101,6 +107,9 @@ Host::receive(Packet* pkt)
 		}
 		else
 		{
+		
+		
+		out_file<<(((DTPPacket*)pkt)->data)<<endl;
 		
 		/* 		if(retrans>=scheduler->time())
 		{
@@ -111,6 +120,37 @@ Host::receive(Packet* pkt)
 		}
 	
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	if(sync_bit==3||sync_bit==2)
 	{
 		if (((DTPPacket*)pkt)->term_connection==1&&term_bit==3&&sync_bit==3)
@@ -228,8 +268,8 @@ Host::handle_timer(void* cookie)
 		}
 	}
     DTPPacket*	pkt = new DTPPacket;
-    unsigned char* d = &(pkt->data[0]);
-	pkt->term_connection=term_bit;
+    //char* d = &(pkt->data[0]);
+    pkt->term_connection=term_bit;
     pkt->source = address();
     pkt->destination = destination;
     pkt->length = sizeof(Packet)+HEADER_SIZE;
@@ -259,10 +299,47 @@ Host::sync()
 	SendMap_iter head = dest_map.find(scheduler->time());
 	sendpair* newpair=(*head).second;
 	destination = newpair->a;
-    dest_map.erase(head);
+        dest_map.erase(head);
 	packets_to_send = 1;
+	cout<<newpair->name<<endl;
+	in_file.open (newpair->name, ios::in); 
+	
     //sent_so_far = 0;
 }
+void
+Host::send_file()
+{
+        string line;
+	if (in_file.is_open())
+         {
+               
+                while ( in_file.good() )
+        {
+        getline (in_file,line);
+        DTPPacket*	pkt = new DTPPacket;
+        char* d = &(pkt->data[0]);
+        strcpy(d,line.c_str());
+	cout<<d<<endl;
+	pkt->term_connection=term_bit;
+        pkt->source = address();
+        pkt->destination = destination;
+        pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
+        sent_so_far+=1;
+	//fprintf(stderr,"\n %d",sent_so_far)
+	pkt->id = sent_so_far;
+ 	pkt->sync_bit=sync_bit;
+        cout << line << endl;
+         if (send(pkt)) {
+       TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	   pkt->print_header();
+	   }
+        }
+    in_file.close();
+        }
+        terminate(destination);
+        return;
+}
+
 void Host::insert_p(Time s,Address d,char* f)
 {
 	sendpair* newpair=new sendpair;
