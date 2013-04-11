@@ -98,7 +98,7 @@ Host::receive(Packet* pkt)
 				TRACE(TRL4,"(Time:%d) node %d Got ACK from node %d\n",scheduler->time(),address(),destination);
 			
 				TRACE(TRL3, "Established FDTP flow from %d to %d (%d)\n",  destination,address(),tm);
-				out_file.open("example.txt", ios::out);
+				//out_file.open("example.txt", ios::out);
 				//term_bit=1;
 				
 			/* 	Node* nd = (scheduler->get_node)(destination);
@@ -167,6 +167,7 @@ Host::receive(Packet* pkt)
 		else if (((DTPPacket*)pkt)->term_connection==1&&term_bit!=3)//&&term_bit==1)
 		{
 			
+			out_file.close();
 			{ 
 			if(sync_bit==2)
 				TRACE(TRL3, "Established FDTP flow from %d to %d (%d)\n",  destination,address(),scheduler->time());
@@ -303,6 +304,11 @@ Host::sync()
 	packets_to_send = 1;
 	cout<<newpair->name<<endl;
 	in_file.open (newpair->name, ios::in); 
+	Node* nd = (scheduler->get_node)(destination);
+	char name[99999];
+	strcpy(name,newpair->name);
+	strcat(name,"_dest");
+        (((Host*)nd)->out_file).open (name, ios::out);
 	
     //sent_so_far = 0;
 }
