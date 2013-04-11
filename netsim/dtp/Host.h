@@ -1,9 +1,19 @@
 class FIFONode;
+class DTPPacket;
 #define MAX 99999;
+typedef struct 
+{
+    Address a;
+    char name[1000];
+}sendpair;
 
-typedef map< Time,Address, ltTime> SendMap;
-typedef map< Time,Address, ltTime>::iterator SendMap_iter;
-typedef pair<Time, Address> SendMapPair;
+typedef map< Time,sendpair*, ltTime> SendMap;
+typedef map< Time,sendpair*, ltTime>::iterator SendMap_iter;
+typedef pair<Time, sendpair*> SendMapPair;
+
+typedef map< Time,DTPPacket*, ltTime> Window;
+typedef map< Time,DTPPacket*, ltTime>::iterator Window_iter;
+typedef pair<Time,DTPPacket*> WindowPair;
 class Host : public FIFONode {
  public:
     Host(Address a);
@@ -14,7 +24,7 @@ class Host : public FIFONode {
     //void sync(Packet* pkt);
 	void receive(Packet* pkt);		// Incoming packet
 	void sync();
-	void insert_p(Time s,Address d);
+	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
 	int sync_bit;
 	int term_bit;
@@ -29,7 +39,8 @@ class Host : public FIFONode {
     Time	start;			// Start sending at
     Time	retrans;	// Inter-packet time
     int		packets_to_send;	// number of packets
-    int		sent_so_far;	
+    int		sent_so_far;
+    Window sent_window;	
 	
     
 };

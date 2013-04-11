@@ -8,8 +8,10 @@
 #include "../netsim/Scheduler.h"
 #include "Host.h"
 #include "Router.h"
+#include <string.h>
+
 #define MAX_QUEUE 99999
-#define timeout 3000
+#define timeout 4000
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
    sync_bit=1;
@@ -255,14 +257,18 @@ void
 Host::sync()
 {
 	SendMap_iter head = dest_map.find(scheduler->time());
-	destination = (*head).second;
+	sendpair* newpair=(*head).second;
+	destination = newpair->a;
     dest_map.erase(head);
 	packets_to_send = 1;
     //sent_so_far = 0;
 }
-void Host::insert_p(Time s,Address d)
+void Host::insert_p(Time s,Address d,char* f)
 {
-	SendMapPair entry(s,d);
+	sendpair* newpair=new sendpair;
+	newpair->a=d;
+	strcpy(newpair->name,f);
+	SendMapPair entry(s,newpair);
 	dest_map.insert(entry);
 }
 void

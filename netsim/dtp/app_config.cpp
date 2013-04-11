@@ -30,7 +30,7 @@ Config::process_app_command(char* id)
         FDTPFlow* cr = new FDTPFlow((Address) config_args[0].numval,
                                       (Address) config_args[1].numval,
                                       (Time) config_args[2].numval,
-                                      (char *) config_args[3].numval);
+                                      config_args[3].strval);
     }
     config_argnum = 0;
     return;
