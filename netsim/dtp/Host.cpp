@@ -225,35 +225,29 @@ Host::handle_timer(void* cookie)
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN to node %d\n",scheduler->time(),address(),destination);
 		}
 	}
-        DTPPacket* pkt = new DTPPacket;
-        unsigned char* d = &(pkt->data[0]);
-       	pkt->term_connection=term_bit;
-        pkt->source = address();
-        pkt->destination = destination;
-        pkt->length = sizeof(Packet)+HEADER_SIZE;
-        sent_so_far+=1;
+    DTPPacket*	pkt = new DTPPacket;
+    unsigned char* d = &(pkt->data[0]);
+	pkt->term_connection=term_bit;
+    pkt->source = address();
+    pkt->destination = destination;
+    pkt->length = sizeof(Packet)+HEADER_SIZE;
+    sent_so_far+=1;
+	if(retrans==scheduler->time()&&retrans_bit==1)
+	{
+		 sent_so_far-=1;
+//fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
+		retrans=scheduler->time() +retrans_timer;
+		set_timer(retrans, NULL);
+		TRACE(TRL3,"RETRANSMIT");
+//fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
+	} 
+	//fprintf(stderr,"\n %d",sent_so_far)
 	pkt->id = sent_so_far;
  	pkt->sync_bit=sync_bit;
- 	if(retrans==scheduler->time()&&retrans_bit==1)
-	{
-		sent_so_far-=1;
-                pkt->id = sent_so_far;
-                retrans=scheduler->time() +retrans_timer;
-		set_timer(retrans, NULL);
-		if (send(pkt)) 
-		{
-                        TRACE(TRL3,"Retransmission: Sent packet from DTP-Host: %d\n",address());
-	                pkt->print_header();
-	        }
-	} 
-	else
-	{
-                if (send(pkt)) 
-                {
-                        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	                pkt->print_header();
-	        }
-	}
+    if (send(pkt)) {
+       TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	   pkt->print_header();
+	   }
 	
 	return;
 }
@@ -262,7 +256,7 @@ Host::sync()
 {
 	SendMap_iter head = dest_map.find(scheduler->time());
 	destination = (*head).second;
-        dest_map.erase(head);
+    dest_map.erase(head);
 	packets_to_send = 1;
     //sent_so_far = 0;
 }
@@ -275,11 +269,11 @@ void
 Host::terminate(Address d)
 {
 	DTPPacket*	pkt = new DTPPacket;
-        destination = d;
+    destination = d;
 	term_bit=1;
 	handle_timer((void*)1);
 	retrans=scheduler->time() +timeout;
-        set_timer(retrans, NULL);
+    set_timer(retrans, NULL);
 	retrans_bit=1;
 	TRACE(TRL4,"(Time:%d) node %d Sent FIN to node %d\n",scheduler->time(),address(),destination);
 			
