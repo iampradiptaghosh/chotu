@@ -21,6 +21,7 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
    retrans=0;
    retrans_bit=0;
    packets_in_window=0;
+   window_size=2;
    retrans_timer=timeout;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
@@ -39,7 +40,11 @@ Host::receive(Packet* pkt)
 {
    	TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
 	((DTPPacket*)pkt)->print_header();
-	 
+	if(((DTPPacket*)pkt)->id==recv_so_far+1)
+	{
+	        recv_so_far+=1;
+	}
+	
 	if(term_bit==0)
 	{
 		if (((DTPPacket*)pkt)->sync_bit==1&&sync_bit==1)
@@ -96,7 +101,7 @@ Host::receive(Packet* pkt)
 				get_dest(pkt);
 				Time tm=scheduler->time();
 				TRACE(TRL4,"(Time:%d) node %d Got ACK from node %d\n",scheduler->time(),address(),destination);
-			
+			        
 				TRACE(TRL3, "Established FDTP flow from %d to %d (%d)\n",  destination,address(),tm);
 				//out_file.open("example.txt", ios::out);
 				//term_bit=1;
@@ -109,8 +114,17 @@ Host::receive(Packet* pkt)
 		{
 		
 		
-		out_file<<(((DTPPacket*)pkt)->data)<<endl;
-		
+		if(!sender)
+		{
+		        out_file<<(((DTPPacket*)pkt)->data);
+		        handle_timer((void*)1);
+		}
+		else
+		{
+		             
+	                packets_in_window--;
+		        send_file();
+		}
 		/* 		if(retrans>=scheduler->time())
 		{
 				cancel_timer(retrans, NULL);
@@ -245,7 +259,7 @@ Host::receive(Packet* pkt)
 		/* if(retrans>=scheduler->time())
 		{
 				cancel_timer(retrans, NULL);
-				retrans_bit=0;
+			window_size	retrans_bit=0;
 		} */
 			//fprintf(stderr,"Dropped, node %d\n",address());
 		}
@@ -286,6 +300,7 @@ Host::handle_timer(void* cookie)
 	} 
 	//fprintf(stderr,"\n %d",sent_so_far)
 	pkt->id = sent_so_far;
+	pkt->ack_id =recv_so_far;
  	pkt->sync_bit=sync_bit;
     if (send(pkt)) {
        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
@@ -315,16 +330,36 @@ Host::sync()
 void
 Host::send_file()
 {
-        string line;
+        char line[PAYLOAD_SIZE];
+        char c;
+        int i=0;
 	if (in_file.is_open())
          {
                
-                while ( in_file.good() )
+                while ( in_file.good()&&!in_file.eof())
         {
-        getline (in_file,line);
+        if(packets_in_window>=window_size)
+	   {    
+	        goto ss;
+	   }
+	   else
+	   {
+	        packets_in_window++;
+	   }
+	   i=0;
+	   while ( in_file.good()&&!in_file.eof())
+           {
+	        line[i]=in_file.get();
+	        i++;
+	        if(i==PAYLOAD_SIZE-1)
+	                break;
+	   }
+	   if(in_file.eof())
+	   i--;
+	   line[i]='\0';     
         DTPPacket*	pkt = new DTPPacket;
         char* d = &(pkt->data[0]);
-        strcpy(d,line.c_str());
+        strcpy(d,line);
 	cout<<d<<endl;
 	pkt->term_connection=term_bit;
         pkt->source = address();
@@ -333,17 +368,20 @@ Host::send_file()
         sent_so_far+=1;
 	//fprintf(stderr,"\n %d",sent_so_far)
 	pkt->id = sent_so_far;
+	pkt->ack_id =recv_so_far;
  	pkt->sync_bit=sync_bit;
         cout << line << endl;
          if (send(pkt)) {
        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
 	   pkt->print_header();
 	   }
+	   
+	   
         }
-    in_file.close();
+        in_file.close();
         }
         terminate(destination);
-        return;
+   ss:     return;
 }
 
 void Host::insert_p(Time s,Address d,char* f)

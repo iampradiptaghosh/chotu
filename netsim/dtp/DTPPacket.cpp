@@ -19,6 +19,6 @@ DTPPacket::print()
 void
 DTPPacket::print_header()
 {
-	TRACE(TRL3, "Packet Header:: source: %d, destination: %d, id: %d, length: %d, Sync_bit: %d, Termination_bit: %d\n",
-          (int) source, (int) destination, id, length,sync_bit,term_connection );
+	TRACE(TRL3, "Packet Header:: source: %d, destination: %d, id: %d, ack_id %d, length: %d, Sync_bit: %d, Termination_bit: %d\n",
+          (int) source, (int) destination, id, ack_id, length,sync_bit,term_connection );
 }

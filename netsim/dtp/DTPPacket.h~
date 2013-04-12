@@ -14,5 +14,5 @@ class DTPPacket : public Packet {
     int term_connection;
 	void print();
 	void print_header();
-    unsigned char data[PAYLOAD_SIZE];
+        char data[PAYLOAD_SIZE];
 };

@@ -15,6 +15,13 @@ typedef pair<Time, sendpair*> SendMapPair;
 typedef map< Time,DTPPacket*, ltTime> Window;
 typedef map< Time,DTPPacket*, ltTime>::iterator Window_iter;
 typedef pair<Time,DTPPacket*> WindowPair;
+
+typedef map< int,DTPPacket*> Window1;
+typedef map< int,DTPPacket*>::iterator Window1_iter;
+typedef pair<int,DTPPacket*> Window1Pair;
+
+
+
 class Host : public FIFONode {
  public:
     Host(Address a);
@@ -26,15 +33,19 @@ class Host : public FIFONode {
 	void receive(Packet* pkt);
 	void send_file();			// Incoming packet
 	void sync();
+	void window_sync();
 	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
 	int sync_bit;
 	int term_bit;
 	int     retrans_bit;
 	int packets_in_window;
+	int window_size;
+	
 	SendMap dest_map;
 	ifstream in_file;
 	ofstream out_file;
+	bool sender;
 	//int dest[MAX];
 	//int dest_count,dest_pointer;
  private:
@@ -44,7 +55,9 @@ class Host : public FIFONode {
     Time	retrans;	// Inter-packet time
     int		packets_to_send;	// number of packets
     int		sent_so_far;
-    Window sent_window;	
+    int		recv_so_far;
+    Window      sent_window;	
+    Window1      recv_window;	
 	
     
 };
