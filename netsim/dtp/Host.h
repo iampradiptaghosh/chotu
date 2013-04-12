@@ -33,7 +33,8 @@ class Host : public FIFONode {
 	void receive(Packet* pkt);
 	void send_file();			// Incoming packet
 	void sync();
-	void window_sync();
+	void send_window_sync(DTPPacket* pkt);
+	void recv_window_sync(DTPPacket* pkt);
 	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
 	int sync_bit;

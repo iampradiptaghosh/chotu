@@ -116,8 +116,7 @@ Host::receive(Packet* pkt)
 		
 		if(!sender)
 		{
-		        out_file<<(((DTPPacket*)pkt)->data);
-		        handle_timer((void*)1);
+		        recv_window_sync((DTPPacket*)pkt);
 		}
 		else
 		{
@@ -383,6 +382,51 @@ Host::send_file()
         terminate(destination);
    ss:     return;
 }
+
+void Host:: recv_window_sync(DTPPacket* pkt)
+{
+      	Window1_iter head = recv_window.find(pkt->id);
+	if(head!=recv_window.end())
+	{
+	        //handle_timer((void*)1);
+	}
+	else if((pkt->id)<recv_so_far)
+	{
+	        //handle_timer((void*)1);
+	}
+	else if((pkt->id)==recv_so_far)
+	{
+	        out_file<<pkt->data;
+	        DTPPacket *pkt1;
+	        Window1_iter head1 =recv_window.begin();
+	        while(head1!=recv_window.end())
+	        {
+	                pkt1=(*head1).second;
+	                if(pkt1->id!=recv_so_far+1)
+	                {
+	                        break;
+	                }
+	                recv_so_far+=1;
+	                out_file<<pkt1->data;
+	                recv_window.erase(head1);
+	                head1 =recv_window.begin();
+	        }
+	                
+         }
+         else
+         {      Window1Pair entry(pkt->id,pkt);
+	        recv_window.insert(entry);
+	 }      
+	 
+	 handle_timer((void*)1);
+}
+
+
+
+
+
+
+
 
 void Host::insert_p(Time s,Address d,char* f)
 {
