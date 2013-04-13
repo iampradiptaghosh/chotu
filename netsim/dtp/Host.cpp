@@ -110,7 +110,7 @@ Host::receive(Packet* pkt)
 				((Host*)nd)->terminate(address()); */
 			}
 		}
-		else
+		else if(((DTPPacket*)pkt)->term_connection==0)
 		{
 		
 		
@@ -121,7 +121,8 @@ Host::receive(Packet* pkt)
 		else
 		{
 		             
-	                packets_in_window--;
+	                //cout<<"jddjdkdkd"<<endl;
+	                send_window_sync((DTPPacket*)pkt);
 		        send_file();
 		}
 		/* 		if(retrans>=scheduler->time())
@@ -333,58 +334,61 @@ Host::send_file()
         char c;
         int i=0;
 	if (in_file.is_open())
-         {
-               
-                while ( in_file.good()&&!in_file.eof())
         {
-        if(packets_in_window>=window_size)
-	   {    
-	        goto ss;
-	   }
-	   else
-	   {
-	        packets_in_window++;
-	   }
-	   i=0;
-	   while ( in_file.good()&&!in_file.eof())
-           {
-	        line[i]=in_file.get();
-	        i++;
-	        if(i==PAYLOAD_SIZE-1)
-	                break;
-	   }
-	   if(in_file.eof())
-	   i--;
-	   line[i]='\0';     
-        DTPPacket*	pkt = new DTPPacket;
-        char* d = &(pkt->data[0]);
-        strcpy(d,line);
-	cout<<d<<endl;
-	pkt->term_connection=term_bit;
-        pkt->source = address();
-        pkt->destination = destination;
-        pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
-        sent_so_far+=1;
-	//fprintf(stderr,"\n %d",sent_so_far)
-	pkt->id = sent_so_far;
-	pkt->ack_id =recv_so_far;
- 	pkt->sync_bit=sync_bit;
-        cout << line << endl;
-         if (send(pkt)) {
-       TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	   pkt->print_header();
-	   }
-	   
-	   
+        while ( in_file.good()&&!in_file.eof())
+        {       
+                if(packets_in_window>=window_size)
+                {    
+                        goto ss;
+                }
+                else
+                {
+                        packets_in_window++;
+                }
+                i=0;
+	        while (!in_file.eof())
+                {
+	                line[i]=in_file.get();
+	                i++;
+	                if(i==PAYLOAD_SIZE-1)
+	                        break;
+	        }
+	        if(in_file.eof())
+	                i-=1;
+	        line[i]='\0';     
+                DTPPacket*	pkt = new DTPPacket;
+                char* d = &(pkt->data[0]);
+                strcpy(d,line);
+	        //cout<<d<<endl;
+	        pkt->term_connection=term_bit;
+                pkt->source = address();
+                pkt->destination = destination;
+                pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
+                sent_so_far+=1;
+	        //fprintf(stderr,"\n %d",sent_so_far)
+	        pkt->id = sent_so_far;
+	        pkt->ack_id =recv_so_far;
+ 	        pkt->sync_bit=sync_bit;
+                //cout << line << endl;
+                if (send(pkt)) 
+                {
+                        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	                pkt->print_header();
+	        }
+	        {
+	                Window1Pair entry(pkt->id,pkt);
+	                recv_window.insert(entry);  
+	        } 
         }
         in_file.close();
         }
         terminate(destination);
-   ss:     return;
+        ss:     return;
 }
 
 void Host:: recv_window_sync(DTPPacket* pkt)
 {
+      	cout<<"aaaaaa"<<endl;
       	Window1_iter head = recv_window.find(pkt->id);
 	if(head!=recv_window.end())
 	{
@@ -397,6 +401,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	else if((pkt->id)==recv_so_far)
 	{
 	        out_file<<pkt->data;
+	        cout<<"aa:"<<pkt->data<<endl;
 	        DTPPacket *pkt1;
 	        Window1_iter head1 =recv_window.begin();
 	        while(head1!=recv_window.end())
@@ -408,6 +413,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	                }
 	                recv_so_far+=1;
 	                out_file<<pkt1->data;
+	                cout<<"bb"<<pkt1->data<<endl;
 	                recv_window.erase(head1);
 	                head1 =recv_window.begin();
 	        }
@@ -421,9 +427,39 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	 handle_timer((void*)1);
 }
 
+void Host:: send_window_sync(DTPPacket* pkt)
+{
 
-
-
+        cout<<"jddjdkdkd"<<endl;
+        if(pkt->ack_id<=last_ack)
+        {
+                //retransmit();
+                return;
+        }
+        cout<<"jddjdkdkd"<<endl;
+        
+        DTPPacket *pkt1;
+        Window1_iter head = recv_window.find(pkt->id);
+	if(head!=recv_window.end())
+	{
+	        cout<<"jddjdkdkd"<<endl;
+	        Window1_iter head1 =recv_window.begin();
+	        while(head1!=head)
+	        {
+	                Window1_iter head1 =recv_window.begin();
+	                pkt1=(*head1).second;
+	                last_ack=pkt->ack_id;
+	                recv_window.erase(head1);
+	                packets_in_window--;
+	        }
+	        pkt1=(*head1).second;
+	        last_ack=pkt->ack_id;
+	        recv_window.erase(head1);
+	        packets_in_window--;
+	        //update window
+	        //retransmit
+	}
+}
 
 
 

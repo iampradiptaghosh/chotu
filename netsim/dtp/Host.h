@@ -57,7 +57,8 @@ class Host : public FIFONode {
     int		packets_to_send;	// number of packets
     int		sent_so_far;
     int		recv_so_far;
-    Window      sent_window;	
+    int         last_ack;
+    Window1      sent_window;	
     Window1      recv_window;	
 	
     
