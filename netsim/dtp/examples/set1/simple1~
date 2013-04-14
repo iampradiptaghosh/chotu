@@ -13,5 +13,5 @@ Host(6)
 
 FDTPFlow(1, 4, 50, "test1")
 FDTPFlow(5, 6, 50, "test2")
-Router(2, 100)
-Router(3, 100)
+Router(2, 1000)
+Router(3, 1000)

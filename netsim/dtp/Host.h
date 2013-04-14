@@ -7,17 +7,19 @@ typedef struct
     Address a;
     char name[1000];
 }sendpair;
-
+struct ltaddr {
+    bool operator() (int t1, int t2) const {
+        return (t1 < t2);
+    }
+};
 typedef map< Time,sendpair*, ltTime> SendMap;
 typedef map< Time,sendpair*, ltTime>::iterator SendMap_iter;
 typedef pair<Time, sendpair*> SendMapPair;
 
-typedef map< Time,DTPPacket*, ltTime> Window;
-typedef map< Time,DTPPacket*, ltTime>::iterator Window_iter;
-typedef pair<Time,DTPPacket*> WindowPair;
 
-typedef map< int,DTPPacket*> Window1;
-typedef map< int,DTPPacket*>::iterator Window1_iter;
+
+typedef map< int,DTPPacket*,ltaddr> Window1;
+typedef map< int,DTPPacket*,ltaddr>::iterator Window1_iter;
 typedef pair<int,DTPPacket*> Window1Pair;
 
 
@@ -33,20 +35,25 @@ class Host : public FIFONode {
 	void receive(Packet* pkt);
 	void send_file();			// Incoming packet
 	void sync();
-	void send_window_sync(DTPPacket* pkt);
+	void sent_window_sync(DTPPacket* pkt);
 	void recv_window_sync(DTPPacket* pkt);
 	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
+	void display();
+	void copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from);
 	int sync_bit;
 	int term_bit;
 	int     retrans_bit;
 	int packets_in_window;
 	int window_size;
-	
+	DTPPacket* retransmit_pkt;
+	//DTPPacket* pkt11;
 	SendMap dest_map;
 	ifstream in_file;
 	ofstream out_file;
 	bool sender;
+	Window1 sent_window;	
+        Window1 recv_window;
 	//int dest[MAX];
 	//int dest_count,dest_pointer;
  private:
@@ -58,8 +65,7 @@ class Host : public FIFONode {
     int		sent_so_far;
     int		recv_so_far;
     int         last_ack;
-    Window1      sent_window;	
-    Window1      recv_window;	
+    	
 	
     
 };

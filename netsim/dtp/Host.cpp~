@@ -13,7 +13,7 @@
 #include <string.h>
 #include <string>
 #define MAX_QUEUE 99999
-#define timeout 4000000
+#define timeout 4000
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
    sync_bit=1;
@@ -21,7 +21,7 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
    retrans=0;
    retrans_bit=0;
    packets_in_window=0;
-   window_size=2;
+   window_size=10;
    retrans_timer=timeout;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
@@ -94,6 +94,7 @@ Host::receive(Packet* pkt)
 			{
 				cancel_timer(retrans, NULL);
 				retrans_bit=0;
+				retrans=0;
 			}
 			if(sync_bit!=3)
 			{
@@ -116,13 +117,23 @@ Host::receive(Packet* pkt)
 		
 		if(!sender)
 		{
-		        recv_window_sync((DTPPacket*)pkt);
+		        if(sync_bit==2)
+		        {
+		                sync_bit=3;
+		                if(retrans>=scheduler->time())
+			        {
+			        	cancel_timer(retrans, NULL);
+				        retrans_bit=0;
+			        	retrans=0;
+			        }
+			 }
+			 recv_window_sync((DTPPacket*)pkt);
 		}
 		else
 		{
 		             
 	                //cout<<"jddjdkdkd"<<endl;
-	                send_window_sync((DTPPacket*)pkt);
+	                sent_window_sync((DTPPacket*)pkt);
 		        send_file();
 		}
 		/* 		if(retrans>=scheduler->time())
@@ -271,6 +282,7 @@ void
 Host::handle_timer(void* cookie)
 {
     
+	DTPPacket*	pkt = new DTPPacket;
 	if(sync_bit==1&&term_bit==0)
 	{
 		if(retrans==0)
@@ -282,7 +294,24 @@ Host::handle_timer(void* cookie)
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN to node %d\n",scheduler->time(),address(),destination);
 		}
 	}
-    DTPPacket*	pkt = new DTPPacket;
+        if(sync_bit==3&&term_bit==0)
+	{
+		if(retrans_bit==2)
+		{	
+			cout<<"kk";
+			last_transmit=scheduler->time();
+			retrans=scheduler->time() +retrans_timer;
+			set_timer(retrans, NULL);
+			retrans_bit=2;
+			cout<<"kk";
+			if (send(retransmit_pkt)) {
+                                        TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
+	                retransmit_pkt->print_header();
+	                }
+	                cout<<"kk";
+	                goto timer_end;
+		}
+	}
     //char* d = &(pkt->data[0]);
     pkt->term_connection=term_bit;
     pkt->source = address();
@@ -307,7 +336,7 @@ Host::handle_timer(void* cookie)
 	   pkt->print_header();
 	   }
 	
-	return;
+	timer_end: return;
 }
 void
 Host::sync()
@@ -334,61 +363,95 @@ Host::send_file()
         char c;
         int i=0;
 	if (in_file.is_open())
-         {
-               
-         while ( in_file.good()&&!in_file.eof())
-        {
-        if(packets_in_window>=window_size)
-	   {    
-	        goto ss;
-	   }
-	   else
-	   {
-	        packets_in_window++;
-	   }
-	   i=0;
-	   while (!in_file.eof())
-           {
-	        line[i]=in_file.get();
-	        i++;
-	        if(i==PAYLOAD_SIZE-1)
-	                break;
-	   }
-	   if(in_file.eof())
-	   i-=1;
-	   line[i]='\0';     
-        DTPPacket*	pkt = new DTPPacket;
-        char* d = &(pkt->data[0]);
-        strcpy(d,line);
-	cout<<d<<endl;
-	pkt->term_connection=term_bit;
-        pkt->source = address();
-        pkt->destination = destination;
-        pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
-        sent_so_far+=1;
-	//fprintf(stderr,"\n %d",sent_so_far)
-	pkt->id = sent_so_far;
-	pkt->ack_id =recv_so_far;
- 	pkt->sync_bit=sync_bit;
-        cout << line << endl;
-         if (send(pkt)) {
-       TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	   pkt->print_header();
-	   }
-	 {
-	        Window1Pair entry(pkt->id,pkt);
-	        recv_window.insert(entry);  
-	 } 
+        {       
+        while ( in_file.good()&&!in_file.eof())
+        {       
+                if(packets_in_window>=window_size)
+                {    
+                        goto ss;
+                }
+                else
+                {
+                        packets_in_window++;
+                }
+                i=0;
+	        while (!in_file.eof())
+                {
+	                line[i]=in_file.get();
+	                i++;
+	                if(i==PAYLOAD_SIZE-1)
+	                        break;
+	        }
+	        if(in_file.eof())
+	                i-=1;
+	        line[i]='\0';     
+                DTPPacket* pkt= new DTPPacket;
+                DTPPacket* pkt11= new DTPPacket;
+                char* d;
+
+                sent_so_far+=1;
+                d = &(pkt->data[0]);
+                strcpy(d,line);
+	        //cout<<d<<endl;
+	        pkt->term_connection=term_bit;
+                pkt->source = address();
+                pkt->destination = destination;
+                pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
+	        //fprintf(stderr,"\n %d",sent_so_far)
+	        pkt->id = sent_so_far;
+	        pkt->ack_id =recv_so_far;
+ 	        pkt->sync_bit=sync_bit;
+ 	        copy_pkt(pkt11,pkt);
+ 	        if (send(pkt)) 
+                {
+                        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	                pkt->print_header();
+	        }
+	        {
+	                /*int sss=(pkt11->id);
+	                cout<<sss<<endl;
+	                Window1_iter head2;
+	                DTPPacket* pkt1;
+	                if(!sent_window.empty())
+	                {
+	                head2 =sent_window.begin();
+	                pkt1 = (*head2).second;
+	                 cout<<"aaaa"<<endl<<endl;
+	                pkt1->print_header();
+	                }*/
+	                Window1Pair entry(pkt11->id,pkt11);
+	                sent_window.insert(entry);  
+	                /*head2 =sent_window.begin();
+	                pkt1 = (*head2).second;
+	                 cout<<"aaaa"<<endl<<endl;
+	                pkt1->print_header();*/
+	        } 
         }
         in_file.close();
         }
         terminate(destination);
-   ss:     return;
+        ss:     Window1_iter head1 =sent_window.begin();
+	        if(!sent_window.empty())
+	        {
+	                retransmit_pkt=(*head1).second;
+	                cout<<"fjfjfjfjf"<<endl<<endl;
+	                retransmit_pkt->print_header();
+	        }
+	        else
+                        retransmit_pkt=NULL;
+        if(retrans_bit==0&&retransmit_pkt!=NULL)
+	{
+	        retrans_bit=2;
+	       	retrans=scheduler->time() +retrans_timer;
+	       	//set_timer(retrans, NULL);
+	}
+	display();		        
+        return;
 }
 
 void Host:: recv_window_sync(DTPPacket* pkt)
 {
-      	cout<<"aaaaaa"<<endl;
+      	//cout<<"aaaaaa"<<endl;
       	Window1_iter head = recv_window.find(pkt->id);
 	if(head!=recv_window.end())
 	{
@@ -401,7 +464,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	else if((pkt->id)==recv_so_far)
 	{
 	        out_file<<pkt->data;
-	        cout<<"aa:"<<pkt->data<<endl;
+	        //cout<<"aa:"<<pkt->data<<endl;
 	        DTPPacket *pkt1;
 	        Window1_iter head1 =recv_window.begin();
 	        while(head1!=recv_window.end())
@@ -413,7 +476,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	                }
 	                recv_so_far+=1;
 	                out_file<<pkt1->data;
-	                cout<<"bb"<<pkt1->data<<endl;
+	                //cout<<"bb"<<pkt1->data<<endl;
 	                recv_window.erase(head1);
 	                head1 =recv_window.begin();
 	        }
@@ -422,47 +485,114 @@ void Host:: recv_window_sync(DTPPacket* pkt)
          else
          {      Window1Pair entry(pkt->id,pkt);
 	        recv_window.insert(entry);
+	        //set_timer(retrans, NULL);
 	 }      
 	 
 	 handle_timer((void*)1);
 }
 
-void Host:: send_window_sync(DTPPacket* pkt)
+void Host:: sent_window_sync(DTPPacket* pkt)
 {
-
-        cout<<"jddjdkdkd"<<endl;
+        //cout<<address()<<endl;
+        display();
+        //cout<<"jddjdkdkd"<<endl;
         if(pkt->ack_id<=last_ack)
         {
                 //retransmit();
                 return;
         }
-        cout<<"jddjdkdkd"<<endl;
-        
-        DTPPacket *pkt1;
-        Window1_iter head = recv_window.find(pkt->id);
-	if(head!=recv_window.end())
+        //cout<<"jddjdkdkd"<<endl;
+        if(retrans>=scheduler->time())
 	{
-	        cout<<"jddjdkdkd"<<endl;
-	        Window1_iter head1 =recv_window.begin();
-	        while(head1!=head)
+	        if(last_ack<pkt->ack_id)
 	        {
-	                Window1_iter head1 =recv_window.begin();
+	                  // cancel_timer(retrans, NULL);
+	                   retrans=0;
+	                   retrans_bit=0;
+	                   //scheduler->time() +retrans_timer;
+	                   //set_timer(retrans, NULL);
+	        }
+	}
+	cout<<"cccc"<<endl<<endl;
+	pkt->print_header();
+        DTPPacket *pkt1;
+        Window1_iter head = sent_window.find(pkt->ack_id);
+	if(head!=sent_window.end()&&!sent_window.empty())
+	{
+	        //cout<<"jddjdkdkd"<<endl;
+	        Window1_iter head1 =sent_window.begin();
+	        if(head1==head)
+	        {
 	                pkt1=(*head1).second;
-	                last_ack=pkt->ack_id;
-	                recv_window.erase(head1);
+	                cout<<"bbbb"<<endl<<endl;
+	                pkt1->print_header();
+	                last_ack=pkt1->ack_id;
+	                sent_window.erase(head1);
 	                packets_in_window--;
 	        }
-	        pkt1=(*head1).second;
-	        last_ack=pkt->ack_id;
-	        recv_window.erase(head1);
-	        packets_in_window--;
+	        else
+	        {
+	        while(head1!=head)
+	        {
+	                head1 =sent_window.begin();
+	                pkt1=(*head1).second;
+	                cout<<"bbbb"<<endl<<endl;
+	                pkt1->print_header();
+	                last_ack=pkt1->ack_id;
+	                sent_window.erase(head1);
+	                packets_in_window--;
+	        }
+	        }
 	        //update window
 	        //retransmit
 	}
+	
+	display();
+	
+	
+	Window1_iter head1 =sent_window.begin();
+	if(head1!=sent_window.end())
+	        retransmit_pkt=(*head1).second;
+	else
+                retransmit_pkt=NULL;
+                
+        if(retrans_bit==0&&retransmit_pkt!=NULL)
+        {
+                retrans_bit=2;
+                retrans=scheduler->time() +retrans_timer;
+                //set_timer(retrans, NULL);
+        }       
+        
+        return;
 }
-
-
-
+void Host::display()
+{
+        
+        if(!sent_window.empty())
+	{
+	        //cout<<"jddjdkdkd"<<endl;
+	        Window1_iter head1 =sent_window.begin();
+	        DTPPacket* pkt1;
+	        while(head1!=sent_window.end())
+	        {
+	                pkt1=(*head1).second;
+	                cout<<"dddd"<<endl<<endl;
+	                pkt1->print_header();
+	                head1=sent_window.upper_bound(pkt1->id);
+	        }
+	}
+}
+void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
+{
+                pkt_to->term_connection=pkt_from->term_connection;
+                pkt_to->source = pkt_from->source;
+                pkt_to->destination = pkt_from->destination;
+                pkt_to->length = pkt_from->length
+	        pkt_to->id = pkt_from->id;
+	        pkt_to->ack_id =pkt_to->ack_id;
+ 	        pkt_to->sync_bit=pkt_from->sync_bit; 
+                strcpy(pkt_to->data,pkt_from->data);
+}
 
 void Host::insert_p(Time s,Address d,char* f)
 {
