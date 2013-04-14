@@ -39,7 +39,7 @@ class Host : public FIFONode {
 	void recv_window_sync(DTPPacket* pkt);
 	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
-	void display();
+	void display(Window1 w1);
 	void copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from);
 	int sync_bit;
 	int term_bit;
