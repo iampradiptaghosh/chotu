@@ -50,7 +50,11 @@ class Host : public FIFONode {
 	//DTPPacket* pkt11;
 	SendMap dest_map;
 	ifstream in_file;
-	char *out_file;
+<<<<<<< HEAD
+	char out_file[1000];
+=======
+	fstream out_file;
+>>>>>>> master
 	bool sender;
 	Window1 sent_window;	
         Window1 recv_window;
@@ -64,7 +68,11 @@ class Host : public FIFONode {
     int		packets_to_send;	// number of packets
     int		sent_so_far;
     int		recv_so_far;
+<<<<<<< HEAD
     bool        write;
+=======
+    int         wrote_so_far;
+>>>>>>> master
     int         last_ack;
     	
 	

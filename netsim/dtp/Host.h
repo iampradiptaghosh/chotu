@@ -51,6 +51,7 @@ class Host : public FIFONode {
 	SendMap dest_map;
 	ifstream in_file;
 	char out_file[1000];
+
 	bool sender;
 	Window1 sent_window;	
         Window1 recv_window;
