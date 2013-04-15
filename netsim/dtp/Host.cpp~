@@ -435,7 +435,7 @@ Host::send_file()
         }
         in_file.close();
         }
-        //terminate(destination);
+       // terminate(destination);
         ss:     Window1_iter head1 =sent_window.begin();
 	        if(!sent_window.empty())
 	        {
@@ -474,7 +474,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	else if((pkt11->id)==recv_so_far&&write)
 	{
 	       
-	        cout<<"aa:"<<pkt11->data<<endl;
+	        //cout<<"aa:"<<pkt11->data<<endl;
 	        if (file1.is_open()&&file1.good())
 	        {
 	               // cout<<"hh"<<endl;

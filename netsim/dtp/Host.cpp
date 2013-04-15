@@ -435,7 +435,7 @@ Host::send_file()
         }
         in_file.close();
         }
-        //terminate(destination);
+        terminate(destination);
         ss:     Window1_iter head1 =sent_window.begin();
 	        if(!sent_window.empty())
 	        {

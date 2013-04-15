@@ -23,13 +23,13 @@ Host(8)
 Host(9)
 
 # Flow goes from node 1 to node 6 starting at 5 s and sending file "test1.txt"
-FDTPFlow(1, 6, 5, "test1.txt")
+FDTPFlow(1, 6, 5, "test1")
 
 # Flow goes from node 2 to node 7 starting at 5 s and sending file "test2.txt"
-FDTPFlow(2, 7, 5, "test2.txt")
+FDTPFlow(2, 7, 5, "test2")
 
 # Flow goes from node 3 to node 8 starting at 5 s and sending file "test3.txt"
-FDTPFlow(3, 8, 5, "test3.txt")
+FDTPFlow(3, 8, 5, "test3")
 
 # Flow goes from node 4 to node 9 starting at 5 s and sending file "test4.txt"
-FDTPFlow(4, 9, 5, "test4.txt")
+FDTPFlow(4, 9, 5, "test4")
