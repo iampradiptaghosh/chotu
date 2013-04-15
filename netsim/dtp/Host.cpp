@@ -21,7 +21,7 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
    retrans=0;
    retrans_bit=0;
    packets_in_window=0;
-   window_size=10;
+   window_size=5;
    retrans_timer=timeout;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
@@ -40,9 +40,11 @@ Host::receive(Packet* pkt)
 {
    	TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
 	((DTPPacket*)pkt)->print_header();
+	write=0;
 	if(((DTPPacket*)pkt)->id==recv_so_far+1)
 	{
 	        recv_so_far+=1;
+	        write=1;
 	}
 	
 	if(term_bit==0)
@@ -192,7 +194,7 @@ Host::receive(Packet* pkt)
 		else if (((DTPPacket*)pkt)->term_connection==1&&term_bit!=3)//&&term_bit==1)
 		{
 			
-			out_file.close();
+			//out_file.close();
 			{ 
 			if(sync_bit==2)
 				TRACE(TRL3, "Established FDTP flow from %d to %d (%d)\n",  destination,address(),scheduler->time());
@@ -352,7 +354,7 @@ Host::sync()
 	char name[99999];
 	strcpy(name,newpair->name);
 	strcat(name,"_dest");
-        (((Host*)nd)->out_file).open (name, ios::out);
+        strcpy((((Host*)nd)->out_file),name);
 	
     //sent_so_far = 0;
 }
@@ -451,21 +453,28 @@ Host::send_file()
 
 void Host:: recv_window_sync(DTPPacket* pkt)
 {
-      	//cout<<"aaaaaa"<<endl;
-      	Window1_iter head = recv_window.find(pkt->id);
+      	DTPPacket* pkt11=new DTPPacket;;
+        copy_pkt(pkt11,pkt);//cout<<"aaaaaa"<<endl;
+      	Window1_iter head = recv_window.find(pkt11->id);
+      	ofstream file1(out_file, ios::out | ios::app);
 	if(head!=recv_window.end())
 	{
 	        //handle_timer((void*)1);
 	}
-	else if((pkt->id)<recv_so_far)
+	else if((pkt11->id)<recv_so_far)
 	{
 	        //handle_timer((void*)1);
 	}
-	else if((pkt->id)==recv_so_far)
+	else if((pkt11->id)==recv_so_far&&write)
 	{
-	        out_file<<pkt->data;
-	        //cout<<"aa:"<<pkt->data<<endl;
-	        DTPPacket *pkt1;
+	       
+	        cout<<"aa:"<<pkt11->data;
+	        if (file1.is_open()&&file1.good())
+	        {
+	               // cout<<"hh"<<endl;
+	                file1<<pkt11->data;
+	        }
+                DTPPacket *pkt1;
 	        Window1_iter head1 =recv_window.begin();
 	        while(head1!=recv_window.end())
 	        {
@@ -475,7 +484,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	                        break;
 	                }
 	                recv_so_far+=1;
-	                out_file<<pkt1->data;
+	                file1<<pkt1->data;
 	                //cout<<"bb"<<pkt1->data<<endl;
 	                recv_window.erase(head1);
 	                head1 =recv_window.begin();
@@ -483,11 +492,12 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	                
          }
          else
-         {      Window1Pair entry(pkt->id,pkt);
+         {      Window1Pair entry(pkt11->id,pkt11);
 	        recv_window.insert(entry);
 	        //set_timer(retrans, NULL);
 	 }      
-	 display(recv_window);
+	// display(recv_window);
+	 file1.close();
 	 handle_timer((void*)1);
 }
 
@@ -568,7 +578,8 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 void Host::display(Window1 w1)
 {
         
-        if(!w1.empty())
+        
+        ;if(!w1.empty())
 	{
 	        //cout<<"jddjdkdkd"<<endl;
 	        Window1_iter head1 =w1.begin();
