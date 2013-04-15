@@ -1,0 +1,22 @@
+# Chain topology: 1 - 2 - 3
+Link(1, 2, 10, 1)
+Link(2, 3, 10, 1)
+Link(3, 4, 10, 1)
+Link(2, 5, 10, 1)
+Link(6, 3, 10, 1)
+Link(2, 7, 10, 1)
+Link(8, 3, 10, 1)
+
+# Node 1 is Sender, node 3 is the receiver, node 2 is a drop tail router
+Host(1)
+Host(4)
+Host(5)
+Host(6)
+Host(7)
+Host(8)
+
+FDTPFlow(1, 4, 50, "test1")
+FDTPFlow(5, 6, 50, "test2")
+FDTPFlow(7, 8, 50, "test3")
+Router(2, 2)
+Router(3, 2)
