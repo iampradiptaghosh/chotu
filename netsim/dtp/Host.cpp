@@ -22,7 +22,6 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
    retrans_bit=0;
    packets_in_window=0;
    window_size=5;
-
    retrans_timer=timeout;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
@@ -311,7 +310,6 @@ Host::handle_timer(void* cookie)
 			copy_pkt(pkt,retransmit_pkt);
 			pkt->ack_id =recv_so_far;
 			if (send(pkt)) {
-
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
 	                pkt->print_header();
 	                }
@@ -362,7 +360,6 @@ Host::sync()
         strcpy((((Host*)nd)->out_file),name);
 	ofstream file1(name, ios::out);
 	file1.close();
-
     //sent_so_far = 0;
 }
 void
@@ -489,7 +486,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	        Window1_iter head1 =recv_window.begin();
 	        display(recv_window);
 	        while(head1!=recv_window.end())
-		{
+	        {
 	                DTPPacket *pkt1;
 	                pkt1=(*head1).second;
 	                if(pkt1->id!=recv_so_far+1)
@@ -608,7 +605,7 @@ void Host::display(Window1 w1)
         
         if(!w1.empty())
 	{
-	        cout<<"jddjdkdkd"<<endl;
+	        //cout<<"jddjdkdkd"<<endl;
 	        Window1_iter head1 =w1.begin();
 	        DTPPacket* pkt1;
 	        while(head1!=w1.end())
@@ -629,9 +626,7 @@ void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
 	        pkt_to->id = pkt_from->id;
 	        pkt_to->ack_id =pkt_to->ack_id;
  	        pkt_to->sync_bit=pkt_from->sync_bit; 
-                //cout<<"flag:";
-                strcpy(&(pkt_to->data[0]),&(pkt_from->data[0]));
-               // cout<<pkt_to->data<<endl;
+                strcpy(pkt_to->data,pkt_from->data);
 }
 
 void Host::insert_p(Time s,Address d,char* f)
