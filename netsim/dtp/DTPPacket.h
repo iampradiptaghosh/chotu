@@ -10,8 +10,9 @@ class DTPPacket : public Packet {
  public:
 	// DTPPacket();
 	// ~DTPPacket();
-	int sync_bit;
-        int term_connection;
+	short sync_bit;
+        bool FIN;
+        bool ACK;
         int ack_id;
 	void print();
 	void print_header();

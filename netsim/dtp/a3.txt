@@ -1,0 +1,244 @@
+test1
+(Time:5) node 1 Sent SYN to node 6
+ <5, virtual void Host::handle_timer(void*)>
+test2
+(Time:5) node 2 Sent SYN to node 7
+ <5, virtual void Host::handle_timer(void*)>
+test3
+(Time:5) node 3 Sent SYN to node 8
+ <5, virtual void Host::handle_timer(void*)>
+test4
+(Time:5) node 4 Sent SYN to node 9
+ <5, virtual void Host::handle_timer(void*)>
+(Time:803) node 6 Got SYN from node 1
+ <803, virtual void Host::receive(Packet*)>
+(Time:803) node 6 Sent SYN-ACK to node 1
+ <803, virtual void Host::receive(Packet*)>
+(Time:1059) node 7 Got SYN from node 2
+ <1059, virtual void Host::receive(Packet*)>
+(Time:1059) node 7 Sent SYN-ACK to node 2
+ <1059, virtual void Host::receive(Packet*)>
+(Time:1601) node 1 Got SYN-ACK from node 6
+ <1601, virtual void Host::receive(Packet*)>
+(Time:1601) node 1 Sent ACK to node 6
+ <1601, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:1857) node 2 Got SYN-ACK from node 7
+ <1857, virtual void Host::receive(Packet*)>
+(Time:1857) node 2 Sent ACK to node 7
+ <1857, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:2399) node 6 Got ACK from node 1
+ <2399, virtual void Host::receive(Packet*)>
+(Time:2655) node 7 Got ACK from node 2
+ <2655, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:5071) node 8 Got SYN from node 3
+ <5071, virtual void Host::receive(Packet*)>
+(Time:5071) node 8 Sent SYN-ACK to node 3
+ <5071, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:5973) node 3 Got SYN-ACK from node 8
+ <5973, virtual void Host::receive(Packet*)>
+(Time:5973) node 3 Sent ACK to node 8
+ <5973, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:7127) node 8 Got ACK from node 3
+ <7127, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:12803) node 9 Got SYN from node 4
+ <12803, virtual void Host::receive(Packet*)>
+(Time:12803) node 9 Sent SYN-ACK to node 4
+ <12803, virtual void Host::receive(Packet*)>
+(Time:13601) node 4 Got SYN-ACK from node 9
+ <13601, virtual void Host::receive(Packet*)>
+(Time:13601) node 4 Sent ACK to node 9
+ <13601, virtual void Host::receive(Packet*)>
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:14399) node 9 Got ACK from node 4
+ <14399, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkNEW RETRANS PACKET:
+
+(Time:37333) node 2 Sent FIN to node 7
+ <37333, void Host::terminate(Address)>
+kkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkkkkkkkkkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:41371) node 7 Sent FIN-ACK to node 2
+ <41371, void Host::recv_window_sync(DTPPacket*)>
+(Time:41371) node 7 Sent FIN to node 2
+ <41371, void Host::terminate(Address)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+kkkkkkkkkkkkNEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+(Time:46311) node 7 Sent FIN-ACK to node 2
+ <46311, virtual void Host::receive(Packet*)>
+(Time:46311) node 7 Sent FIN to node 2
+ <46311, void Host::terminate(Address)>
+NEW RETRANS PACKET:
+
+(Time:46385) node 2 Sent FIN-ACK to node 7
+ <46385, virtual void Host::receive(Packet*)>
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+
+NEW RETRANS PACKET:
+

@@ -22,6 +22,7 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
    retrans_bit=0;
    packets_in_window=0;
    window_size=5;
+   ter_seq=MAX_QUEUE;
    retrans_timer=timeout;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
@@ -40,6 +41,7 @@ Host::receive(Packet* pkt)
 {
    	TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
 	((DTPPacket*)pkt)->print_header();
+	cout<<term_bit<<endl;
 	write=0;
 	if(((DTPPacket*)pkt)->id==recv_so_far+1)
 	{
@@ -113,7 +115,13 @@ Host::receive(Packet* pkt)
 				((Host*)nd)->terminate(address()); */
 			}
 		}
-		else if(((DTPPacket*)pkt)->term_connection==0)
+
+	
+	}
+	
+	if(sync_bit==3)
+	{			
+	        if(((DTPPacket*)pkt)->FIN==0)
 		{
 		
 		
@@ -145,8 +153,104 @@ Host::receive(Packet* pkt)
 		} */
 		//fprintf(stderr,"Dropped, node %d\n",address());
 		}
+		else if(((DTPPacket*)pkt)->FIN==1&&((DTPPacket*)pkt)->ACK==0)
+		{
+		     sent_window_sync((DTPPacket*)pkt);
+		     if(!sender)
+		     {
+		        if(((DTPPacket*)pkt)->id==recv_so_far)
+		        {
+		                DTPPacket*	pkt1 = new DTPPacket;
+                                pkt1->source = address();
+                                pkt1->destination = destination;
+                                pkt1->length = sizeof(Packet)+HEADER_SIZE;
+                                if(write)
+                                        sent_so_far+=1;
+                                pkt1->id = sent_so_far;
+                              	pkt1->ack_id =recv_so_far;
+                        	pkt1->sync_bit=sync_bit;
+                        	pkt1->FIN=1;
+                                pkt1->ACK=1;
+        	                if (send(pkt1)) 
+                                {
+                                   TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	                           pkt1->print_header();
+	                         }
+	                        TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
+	                        terminate(destination);
+		        }
+		        else
+		        {
+		                term_bit=1;
+		                ter_seq=((DTPPacket*)pkt)->id;
+		        }
+		      }
+		      else 
+		      {
+		        
+		        //cout<<"aaa"<<term_bit<<endl;
+		        if(term_bit==2)
+		        {
+		        DTPPacket*	pkt2 = new DTPPacket;
+                        pkt2->source = address();
+                        pkt2->destination = destination;
+                        pkt2->length = sizeof(Packet)+HEADER_SIZE;
+                        if(write)
+                                sent_so_far+=1;
+                       // sent_so_far+=1;
+                        pkt2->id = sent_so_far;
+                	pkt2->ack_id =recv_so_far;
+                 	pkt2->sync_bit=sync_bit;
+                 	pkt2->FIN=1;
+                        pkt2->ACK=1;
+	                if (send(pkt2)) 
+                        {
+                        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	                pkt2->print_header();
+	                }
+	                TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
+		        }
+		        else
+		        {
+		        //cout<<"bbb"<<endl;
+		        //sent_window_sync((DTPPacket*)pkt);
+		        }
+		      }
+                }
+                else if(((DTPPacket*)pkt)->FIN==1&&((DTPPacket*)pkt)->ACK==1)
+	        {
+	            // cout<<"aaa"<<endl;
+	             sent_window_sync((DTPPacket*)pkt);
+	             if(!sender)
+		     {
+		      //  cout<<"aaa"<<endl;
+		        //sent_window_sync((DTPPacket*)pkt);
+		        if(((DTPPacket*)pkt)->id==recv_so_far&&term_bit==1)
+		        {
+		        // cout<<"aaa"<<endl;
+		         TRACE(TRL3, "Tore down FDTP flow from %d to %d (%d)\n", destination, address(),scheduler->time());
+			term_bit=2;
+		        
+		        }
+		      //  else
+		    //    {
+		      //          term_bit=1;
+		       // }
+		      }
+		      else
+		      {
+		         if(term_bit==1)
+		         {
+		                term_bit=2;
+		                //TRACE(TRL3, "Tore down FDTP flow from %d to %d (%d)\n", destination, address(),scheduler->time());
+		                 //cout<<"ccc"<<term_bit<<endl;
+		               // sent_window_sync((DTPPacket*)pkt);
+		                
+		          }
+		       }
+		 }
+        }     
 	
-	}
 	
 	
 	
@@ -171,16 +275,9 @@ Host::receive(Packet* pkt)
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	if(sync_bit==3||sync_bit==2)
+	/*if(sync_bit==3||sync_bit==2)
 	{
-		if (((DTPPacket*)pkt)->term_connection==1&&term_bit==3&&sync_bit==3)
+		if (((DTPPacket*)pkt)->FIN==1&&term_bit==3&&sync_bit==3)
 		{
 			TRACE(TRL4,"(Time:%d) node %d Got Duplicate FIN from node %d\n",scheduler->time(),address(),destination);
 			//fprintf(stderr,"Got FIN, node %d\n",address());
@@ -191,7 +288,7 @@ Host::receive(Packet* pkt)
 			TRACE(TRL4,"(Time:%d) node %d Sent Duplicate FIN-ACK to node %d\n",scheduler->time(),address(),destination);
 			
 		}
-		else if (((DTPPacket*)pkt)->term_connection==1&&term_bit!=3)//&&term_bit==1)
+		else if (((DTPPacket*)pkt)->FIN==1&&term_bit!=3)//&&term_bit==1)
 		{
 			
 			//out_file.close();
@@ -215,7 +312,7 @@ Host::receive(Packet* pkt)
 			
 		}
 		
-		else if (((DTPPacket*)pkt)->term_connection==2&&term_bit==1&&sync_bit==3)
+		else if (((DTPPacket*)pkt)->FIN==2&&term_bit==1&&sync_bit==3)
 		{
 			if(retrans>=scheduler->time())
 			{
@@ -229,7 +326,7 @@ Host::receive(Packet* pkt)
 			//fprintf(stderr,"Got FIN-ack, node %d (%d)\n",address(),scheduler->time());
 			//handle_timer((void*)1);
 		}
-		else if (((DTPPacket*)pkt)->term_connection==3&&term_bit==4&&sync_bit==3)
+		else if (((DTPPacket*)pkt)->FIN==3&&term_bit==4&&sync_bit==3)
 		{
 			//term_bit=4;
 			TRACE(TRL4,"(Time:%d) node %d Got Duplicate FIN from node %d\n",scheduler->time(),address(),destination);
@@ -237,7 +334,7 @@ Host::receive(Packet* pkt)
 			TRACE(TRL4,"(Time:%d) node %d Sent Duplicate FIN-ACK to node %d\n",scheduler->time(),address(),destination);
 			//handle_timer((void*)1);
 		}
-		else if (((DTPPacket*)pkt)->term_connection==3&&term_bit==3&&sync_bit==3)
+		else if (((DTPPacket*)pkt)->FIN==3&&term_bit==3&&sync_bit==3)
 		{
 			TRACE(TRL4,"(Time:%d) node %d Got FIN from node %d\n",scheduler->time(),address(),destination);
 			term_bit=4;
@@ -245,7 +342,7 @@ Host::receive(Packet* pkt)
 			TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
 		}
 		
-		else if (((DTPPacket*)pkt)->term_connection==4&&term_bit==3&&sync_bit==3)
+		else if (((DTPPacket*)pkt)->FIN==4&&term_bit==3&&sync_bit==3)
 		{
 			if(retrans>=scheduler->time())
 			{
@@ -269,15 +366,10 @@ Host::receive(Packet* pkt)
 		}
 		else
 		{
-		/* if(retrans>=scheduler->time())
-		{
-				cancel_timer(retrans, NULL);
-			window_size	retrans_bit=0;
-		} */
 			//fprintf(stderr,"Dropped, node %d\n",address());
 		}
 	}
-	
+	*/
     if(pkt)
     delete pkt;
 } 
@@ -301,24 +393,26 @@ Host::handle_timer(void* cookie)
 	{
 		if(retrans_bit==2)
 		{	
-			cout<<"kk";
+			//cout<<"kk";
 			last_transmit=scheduler->time();
 			retrans=scheduler->time() +retrans_timer;
 			set_timer(retrans, NULL);
 			retrans_bit=2;
-			cout<<"kk";
+			//cout<<"kk";
 			copy_pkt(pkt,retransmit_pkt);
 			pkt->ack_id =recv_so_far;
 			if (send(pkt)) {
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
 	                pkt->print_header();
 	                }
-	                cout<<"kk";
+	                //cout<<"kk";
 	                goto timer_end;
 		}
 	}
     //char* d = &(pkt->data[0]);
-    pkt->term_connection=term_bit;
+   // pkt->FIN=term_bit;
+    pkt->FIN=0;
+    pkt->ACK=0;
     pkt->source = address();
     pkt->destination = destination;
     pkt->length = sizeof(Packet)+HEADER_SIZE;
@@ -360,6 +454,14 @@ Host::sync()
         strcpy((((Host*)nd)->out_file),name);
 	ofstream file1(name, ios::out);
 	file1.close();
+	sync_bit=1;
+	term_bit=0;
+	retrans=0;
+	retrans_bit=0;
+	((Host*)nd)->sync_bit=1;
+	((Host*)nd)->term_bit=0;
+	((Host*)nd)->retrans=0;
+	((Host*)nd)->retrans_bit=0;
     //sent_so_far = 0;
 }
 void
@@ -399,7 +501,9 @@ Host::send_file()
                 d = &(pkt->data[0]);
                 strcpy(d,line);
 	        //cout<<d<<endl;
-	        pkt->term_connection=term_bit;
+	        //pkt->FIN=term_bit;
+                pkt->FIN=0;
+                pkt->ACK=0;
                 pkt->source = address();
                 pkt->destination = destination;
                 pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
@@ -434,8 +538,14 @@ Host::send_file()
 	        } 
         }
         in_file.close();
+        //terminate(destination);
+        
+        
         }
-        terminate(destination);
+        if(packets_in_window<window_size&&term_bit==0)
+        {    
+                terminate(destination);
+        }
         ss:     Window1_iter head1 =sent_window.begin();
 	        if(!sent_window.empty())
 	        {
@@ -484,7 +594,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	        if(!recv_window.empty())
 	        {
 	        Window1_iter head1 =recv_window.begin();
-	        display(recv_window);
+	        //display(recv_window);
 	        while(head1!=recv_window.end())
 	        {
 	                DTPPacket *pkt1;
@@ -512,7 +622,30 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	// display(recv_window);
 	 file1.close();
 	 }
-	 handle_timer((void*)1);
+	 if(ter_seq==recv_so_far+1&&write)
+	 {
+                DTPPacket*	pkt2 = new DTPPacket;
+                pkt2->source = address();
+                pkt2->destination = destination;
+                pkt2->length = sizeof(Packet)+HEADER_SIZE;
+                sent_so_far+=1;
+                pkt2->id = sent_so_far;
+                pkt2->ack_id =recv_so_far;
+                pkt2->sync_bit=sync_bit;
+                pkt2->FIN=1;
+                pkt2->ACK=1;
+                if (send(pkt2)) 
+                {
+                        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+                        pkt2->print_header();
+                }
+                TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
+                terminate(destination);
+	 }
+	 else
+	 {
+	        handle_timer((void*)1);
+	 }
 }
 
 void Host:: sent_window_sync(DTPPacket* pkt)
@@ -542,15 +675,15 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	//pkt->print_header();
         DTPPacket *pkt1;
         Window1_iter head = sent_window.find(pkt->ack_id);
-	if(!sent_window.empty()&&head==sent_window.end())
-	{
-	        Window1_iter head22 =sent_window.end();
-	        pkt1=(*head22).second;
+	//if(!sent_window.empty()&&head==sent_window.end())
+	//{
+	  //      Window1_iter head22 =sent_window.end();
+	    //    pkt1=(*head22).second;
 	       // cout<<last_ack<<"END:"<<endl;
 	               //cout<<"bb"<<pkt1->data<<endl;
 	                //recv_window.erase(head1);
 	                //head1 =recv_window.begin();
-	}
+	//}
 	if(head!=sent_window.end()&&!sent_window.empty())
 	{
 	        //cout<<"jddjdkdkd"<<endl;
@@ -619,7 +752,8 @@ void Host::display(Window1 w1)
 }
 void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
 {
-                pkt_to->term_connection=pkt_from->term_connection;
+                pkt_to->FIN=pkt_from->FIN;
+                pkt_to->ACK=pkt_from->ACK;
                 pkt_to->source = pkt_from->source;
                 pkt_to->destination = pkt_from->destination;
                 pkt_to->length = pkt_from->length;
@@ -640,13 +774,46 @@ void Host::insert_p(Time s,Address d,char* f)
 void
 Host::terminate(Address d)
 {
-	DTPPacket*	pkt = new DTPPacket;
-    destination = d;
+	DTPPacket*	pkt11 = new DTPPacket;
+        destination = d;
 	term_bit=1;
-	handle_timer((void*)1);
-	retrans=scheduler->time() +timeout;
-    set_timer(retrans, NULL);
-	retrans_bit=1;
+	 //handle_timer((void*)1);
+	DTPPacket*	pkt12 = new DTPPacket;
+        pkt12->source = address();
+        pkt12->destination = destination;
+        pkt12->length = sizeof(Packet)+HEADER_SIZE;
+        sent_so_far+=1;
+        pkt12->id = sent_so_far;
+	pkt12->ack_id =recv_so_far;
+ 	pkt12->sync_bit=sync_bit;
+ 	pkt12->FIN=1;
+        pkt12->ACK=0;
+	        copy_pkt(pkt11,pkt12);
+        	Window1Pair entry(pkt11->id,pkt11);
+        	sent_window.insert(entry);
+        if (send(pkt12)) 
+        {
+                TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	        pkt12->print_header();
+	}
+	   //retrans=scheduler->time() +timeout;
+        //set_timer(retrans, NULL);
+	//retrans_bit=1;
 	TRACE(TRL4,"(Time:%d) node %d Sent FIN to node %d\n",scheduler->time(),address(),destination);
+	Window1_iter head1 =sent_window.begin();
+	        if(!sent_window.empty())
+	        {
+	                retransmit_pkt=(*head1).second;
+	                cout<<"NEW RETRANS PACKET:"<<endl<<endl;
+	                retransmit_pkt->print_header();
+	        }
+	        else
+                        retransmit_pkt=NULL;
+        if(retrans_bit==0&&retransmit_pkt!=NULL)
+	{
+	        retrans_bit=2;
+	       	retrans=scheduler->time() +retrans_timer;
+	       	set_timer(retrans, NULL);
+	}
 			
 }

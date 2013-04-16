@@ -66,6 +66,7 @@ class Host : public FIFONode {
     int		recv_so_far;
     bool        write;
     int         last_ack;
+    int		ter_seq;
     	
 	
     

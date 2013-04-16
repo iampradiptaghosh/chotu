@@ -4,14 +4,14 @@ Link(1, 5, 10, 1)
 Link(2, 5, 10, 1)
 Link(3, 5, 10, 1)
 Link(4, 5, 10, 1)
-Link(6, 5, 10, 1)
-Link(7, 5, 10, 1)
-Link(8, 5, 10, 1)
-Link(9, 5, 10, 1)
+Link(6, 10, 10, 1)
+Link(7, 10, 10, 1)
+Link(8, 10, 10, 1)
+Link(9, 10, 10, 1)
 
 # Router is node 5
 Router(5, 1)
-
+Router(10, 1)
 # Hosts 1, 2, 3 and 4 are Senders, hosts 6, 7, 8 and 9 are Receivers
 Host(1)
 Host(2)
