@@ -43,11 +43,16 @@ Host::receive(Packet* pkt)
 	((DTPPacket*)pkt)->print_header();
 	cout<<term_bit<<endl;
 	write=0;
+	if(!sender)
+	{
 	if(((DTPPacket*)pkt)->id==recv_so_far+1)
 	{
 	        recv_so_far+=1;
 	        write=1;
 	}
+	}
+	else
+        	recv_so_far=((DTPPacket*)pkt)->id;
 	
 	if(term_bit==0)
 	{
@@ -109,7 +114,11 @@ Host::receive(Packet* pkt)
 			if(((DTPPacket*)pkt)->id>recv_so_far)
 	                {
 	                        recv_so_far+=1;
-	                        write=1;
+	                        if(((DTPPacket*)pkt)->id==recv_so_far+1)
+                                {
+                                        recv_so_far+=1;
+	                                write=1;
+	                        }
 	                        //handle_timer((void*)1);
 	                }
 			//out_file.open("example.txt", ios::out);
@@ -131,7 +140,7 @@ Host::receive(Packet* pkt)
 		
 		if(!sender)
 		{
-		        cout<<"khg"<<endl;
+		       // cout<<"khg"<<endl;
 		        if(sync_bit==2)
 		        {
 		                sync_bit=3;
@@ -225,13 +234,14 @@ Host::receive(Packet* pkt)
                 else if(((DTPPacket*)pkt)->FIN==1&&((DTPPacket*)pkt)->ACK==1)
 	        {
 	            // cout<<"aaa"<<endl;
-	             sent_window_sync((DTPPacket*)pkt);
+	            
 	             if(!sender)
 		     {
 		      //  cout<<"aaa"<<endl;
 		        //sent_window_sync((DTPPacket*)pkt);
 		        if(((DTPPacket*)pkt)->id==recv_so_far&&term_bit==1)
 		        {
+		         sent_window_sync((DTPPacket*)pkt);
 		        // cout<<"aaa"<<endl;
 		         TRACE(TRL3, "Tore down FDTP flow from %d to %d (%d)\n", destination, address(),scheduler->time());
 			term_bit=2;
@@ -247,6 +257,7 @@ Host::receive(Packet* pkt)
 		         if(term_bit==1)
 		         {
 		                term_bit=2;
+		                 sent_window_sync((DTPPacket*)pkt);
 		                //TRACE(TRL3, "Tore down FDTP flow from %d to %d (%d)\n", destination, address(),scheduler->time());
 		                 //cout<<"ccc"<<term_bit<<endl;
 		               // sent_window_sync((DTPPacket*)pkt);
