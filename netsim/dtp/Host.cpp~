@@ -559,7 +559,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	                pkt1=(*head1).second;
 	                //cout<<"bbbb"<<endl<<endl;
 	                //pkt1->print_header();
-	                last_ack++;
+	               // last_ack++;
 	                sent_window.erase(head1);
 	                packets_in_window--;
 	        }
@@ -571,7 +571,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	                pkt1=(*head1).second;
 	                //cout<<"bbbb"<<endl<<endl;
 	                //pkt1->print_header();
-	                 last_ack++;;
+	                // last_ack++;;
 	                sent_window.erase(head1);
 	                packets_in_window--;
 	        }

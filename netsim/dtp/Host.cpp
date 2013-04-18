@@ -588,7 +588,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	
 	RTO = (RTT + K*RTTVAR);
 	cout<<"Current RTT:"<<scheduler->time()-last_transmit<<endl;
-        id_time_iter id_timer = send_time.find(pkt->ack_id);
+        id_time_iter id_timer = send_time.find(pkt->ack_id+1);
 
 	                //cout<<"kk";	
 	if(id_timer!=send_time.end()&&!send_time.empty())
