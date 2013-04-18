@@ -16,8 +16,8 @@ Link(13, 2, 10, 1)
 Link(14, 2, 10, 1)
 
 # Routers are nodes 1,2
-Router(1, 2)
-Router(2, 2)
+Router(1, 5)
+Router(2, 5)
 
 # Hosts 1 and 2 are Senders, hosts 6 and 7 are Receivers
 Host(3)

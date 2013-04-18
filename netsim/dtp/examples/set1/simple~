@@ -8,5 +8,5 @@ Host(3)
 
 FDTPFlow(1, 3, 50, "test1")
 
-Router(2, 2)
+Router(2, 1)
 

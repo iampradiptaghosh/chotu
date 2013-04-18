@@ -22,6 +22,9 @@ typedef map< int,DTPPacket*,ltaddr> Window1;
 typedef map< int,DTPPacket*,ltaddr>::iterator Window1_iter;
 typedef pair<int,DTPPacket*> Window1Pair;
 
+typedef map<int,Time,ltaddr> id_time;
+typedef map< int,Time,ltaddr>::iterator id_time_iter;
+typedef pair<int,Time> id_timePair;
 
 
 class Host : public FIFONode {
@@ -54,10 +57,11 @@ class Host : public FIFONode {
 	bool sender;
 	Window1 sent_window;	
         Window1 recv_window;
+        id_time send_time;
 	//int dest[MAX];
 	//int dest_count,dest_pointer;
  private:
-	Time retrans_timer, last_transmit;
+    Time RTO, last_transmit;
     Address	destination;		// Target address
     Time	start;			// Start sending at
     Time	retrans;	// Inter-packet time
@@ -67,6 +71,8 @@ class Host : public FIFONode {
     bool        write;
     int         last_ack;
     int		ter_seq;
+    bool        flag;
+    Time RTT,RTTVAR;
     	
 	
     
