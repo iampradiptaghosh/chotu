@@ -54,10 +54,10 @@ Host(17)
 Host(18)
 
 # Flows
-FDTPFlow(7, 18, 5, "test1")
-FDTPFlow(8, 9, 5, "test2")
-FDTPFlow(10, 17, 5, "test3")
-FDTPFlow(11, 13, 5, "test4")
-FDTPFlow(12, 14, 5, "test5")
-FDTPFlow(15, 16, 5, "test6")
+FDTPFlow(7, 18, 5, "test1.txt")
+FDTPFlow(8, 9, 5, "test1.txt")
+FDTPFlow(10, 17, 5, "test1.txt")
+FDTPFlow(11, 13, 5, "test1.txt")
+FDTPFlow(12, 14, 5, "test1.txt")
+FDTPFlow(15, 16, 5, "test1.txt")
 

@@ -1,9 +1,9 @@
-#Mesh Topology
+#Ring Topology
 
-Link(1, 17, 10, 1)
-Link(2, 17, 10, 1)
-Link(3, 17, 10, 1)
-Link(4, 17, 10, 1)
+Link(1, 2, 10, 1)
+Link(2, 3, 10, 1)
+Link(3, 4, 10, 1)
+Link(1, 4, 10, 1)
 
 Link(5, 1, 10, 1)
 Link(6, 1, 10, 1)
@@ -24,7 +24,7 @@ Router(1, 1)
 Router(2, 1)
 Router(3, 1)
 Router(4, 1)
-Router(17, 1)
+
 
 # Hosts 
 Host(5)
@@ -41,9 +41,9 @@ Host(15)
 Host(16)
 
 # Flow goes from node 1 to node 6 starting at 10 s and sending file "test1.txt"
-FDTPFlow(5, 11, 10, "test1")
-FDTPFlow(6, 15, 10, "test2")
-FDTPFlow(7, 13, 10, "test3")
-FDTPFlow(8, 12, 10, "test4")
-FDTPFlow(9, 14, 10, "test5")
-FDTPFlow(10, 16, 10, "test6")
+FDTPFlow(5, 11, 10, "test1.txt")
+FDTPFlow(6, 15, 10, "test1.txt")
+FDTPFlow(7, 13, 10, "test1.txt")
+FDTPFlow(8, 12, 10, "test1.txt")
+FDTPFlow(9, 14, 10, "test1.txt")
+FDTPFlow(10, 16, 10, "test1.txt")
