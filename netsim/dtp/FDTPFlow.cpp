@@ -20,6 +20,9 @@ FDTPFlow::FDTPFlow(Address a, Address d,Time s, char* f)
 	(((Host*)nd)->set_timer)(s,NULL);
 	
 	((Host*)nd)->sender=1;
+	
+	Node* nd1 = (scheduler->get_node)(d);
+        ((Host*)nd1)->sender=0;
 //	(((Host*)nd)->sync)();
 	/* while(!(((Host*)nd)->sync_bit))
 		printf("\nff"); */

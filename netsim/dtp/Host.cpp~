@@ -68,6 +68,7 @@ Host::receive(Packet* pkt)
 			handle_timer((void*)1);
 			retrans=scheduler->time() +RTO;
 			set_timer(retrans, NULL);
+			cout<<"Next Retransmit:"<<retrans<<endl;
 			retrans_bit=1;
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN-ACK to node %d\n",scheduler->time(),address(),destination);
 			
@@ -200,6 +201,7 @@ Host::receive(Packet* pkt)
 	                           pkt1->print_header();
 	                         }
 	                        TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
+	                        term_bit=2;
 	                        //terminate(destination);
 		        }
 		        else
@@ -249,6 +251,7 @@ Host::handle_timer(void* cookie)
 			last_transmit=scheduler->time();
 			retrans=scheduler->time() +RTO;
 			set_timer(retrans, NULL);
+			cout<<"Next Retransmit:"<<retrans<<endl;
 			retrans_bit=1;
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN to node %d\n",scheduler->time(),address(),destination);
 		}
@@ -259,8 +262,11 @@ Host::handle_timer(void* cookie)
 		{	
 			//cout<<"kk";
 			//last_transmit=scheduler->time();
+			if(retrans==scheduler->time())
+			{
 			retrans=scheduler->time() +RTO;
 			set_timer(retrans, NULL);
+			cout<<"Next Retransmit:"<<retrans<<endl;
 			retrans_bit=2;
 			//cout<<"kk";
 			copy_pkt(pkt,retransmit_pkt);
@@ -268,6 +274,7 @@ Host::handle_timer(void* cookie)
 			if (send(pkt)) {
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
 	                pkt->print_header();
+	                }
 	                }
 	                //cout<<"kk";
 	                goto timer_end;
@@ -277,6 +284,11 @@ Host::handle_timer(void* cookie)
    // pkt->FIN=term_bit;
     pkt->FIN=0;
     pkt->ACK=0;
+    if(term_bit==2&&!sender)
+    {
+        pkt->FIN=1;
+        pkt->ACK=1;
+    }
     pkt->source = address();
     pkt->destination = destination;
     pkt->length = sizeof(Packet)+HEADER_SIZE;
@@ -287,6 +299,7 @@ Host::handle_timer(void* cookie)
 //fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
 		retrans=scheduler->time() +RTO;
 		set_timer(retrans, NULL);
+		cout<<"Next Retransmit:"<<retrans<<endl;
 		TRACE(TRL3,"RETRANSMIT");
 //fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
 	} 
@@ -429,6 +442,7 @@ Host::send_file()
 	        retrans_bit=2;
 	       	retrans=scheduler->time() +RTO;
 	       	set_timer(retrans, NULL);
+	       	cout<<"Next Retransmit:"<<retrans<<endl;
 	}
 	//display();		        
         return;
@@ -510,6 +524,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
                         pkt2->print_header();
                 }
                 TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
+                term_bit=2;
 	 }
 	 else
 	 {
@@ -588,7 +603,8 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	
 	RTO = (RTT + K*RTTVAR);
 	cout<<"Current RTT:"<<scheduler->time()-last_transmit<<endl;
-        id_time_iter id_timer = send_time.find(pkt->ack_id);
+	cout<<"Current RTO:"<<RTO<<endl;
+        id_time_iter id_timer = send_time.find(pkt->ack_id+1);
 
 	                //cout<<"kk";	
 	if(id_timer!=send_time.end()&&!send_time.empty())
@@ -623,6 +639,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	        retrans_bit=2;
                 retrans=scheduler->time() +RTO;
                 set_timer(retrans, NULL);
+                cout<<"Next Retransmit:"<<retrans<<endl;
         }       
         }
         cout<<"last_ack="<<last_ack<<endl;
@@ -696,7 +713,7 @@ Host::terminate(Address d)
         //set_timer(retrans, NULL);
 	//retrans_bit=1;
 	TRACE(TRL4,"(Time:%d) node %d Sent FIN to node %d\n",scheduler->time(),address(),destination);
-	Window1_iter head1 =sent_window.begin();
+/*	Window1_iter head1 =sent_window.begin();
 	        if(!sent_window.empty())
 	        {
 	                retransmit_pkt=(*head1).second;
@@ -711,5 +728,5 @@ Host::terminate(Address d)
 	       	retrans=scheduler->time() +RTO;
 	       	set_timer(retrans, NULL);
 	}
-			
+*/			
 }
