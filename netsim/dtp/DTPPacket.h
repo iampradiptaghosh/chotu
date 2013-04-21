@@ -12,6 +12,8 @@ class DTPPacket : public Packet {
 	// ~DTPPacket();
 	short sync_bit;
         bool FIN;
+        bool ECN;
+        bool ECN1;
         bool ACK;
         int ack_id;
 	void print();

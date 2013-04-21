@@ -32,12 +32,12 @@ Link(6, 17, 10, 1)
 Link(6, 18, 10, 1)
 
 # Routers are nodes 1, 2, 3, 4, 5 and 6
-Router(1, 1)
-Router(2, 1)
-Router(3, 1)
-Router(4, 1)
-Router(5, 1)
-Router(6, 1)
+Router(1, 50)
+Router(2, 50)
+Router(3, 50)
+Router(4, 50)
+Router(5, 50)
+Router(6, 50)
 
 # Hosts 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 Host(7)

@@ -43,6 +43,7 @@ class Host : public FIFONode {
 	void insert_p(Time s,Address d,char* f);
 	void terminate(Address d);
 	void display(Window1 w1);
+	void congestion_control(DTPPacket* pkt);
 	void copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from);
 	int sync_bit;
 	int term_bit;
@@ -55,6 +56,7 @@ class Host : public FIFONode {
 	ifstream in_file;
 	char out_file[1000];
 	bool sender;
+	bool ECN;
 	Window1 sent_window;	
         Window1 recv_window;
         id_time send_time;

@@ -1,12 +1,18 @@
-class FIFONode;
+class Packet;
+class Node;
 
+//
+// As its name suggests, PacketQueue maintains a FIFO queue of
+// packets. At each FIFONode, there is one such queue for every
+// nexthop. The queue size is configurable.
+//
 
-class PacketQueue1 {
-    friend class Router;
+class PacketQueue {
+    friend class FIFONode;
     
  public:
-    PacketQueue1(int sz, Address s, Address d);
-    ~PacketQueue1();
+    PacketQueue(int sz, Address s, Address d);
+    ~PacketQueue();
 
     // Return 0 if no space in queue, else 1
     int enq(Packet* p);			// Pointer to packet to send
@@ -21,9 +27,10 @@ class PacketQueue1 {
     Address		node;		// Node at which queue resides
     Address		neighbor;	// Neighbor for queue
 };
-typedef map<Address, PacketQueue1*, ltAddress> QueueMap1;
-typedef map<Address, PacketQueue1*, ltAddress>::iterator QueueMapIterator1;
-typedef pair<Address, PacketQueue1*> QueueMapPair1;
+
+typedef map<Address, PacketQueue*, ltAddress> QueueMap;
+typedef map<Address, PacketQueue*, ltAddress>::iterator QueueMapIterator;
+typedef pair<Address, PacketQueue*> QueueMapPair;
 
 //
 // The FIFONode implements a FCFS router. Most routers in the Internet
@@ -32,11 +39,14 @@ typedef pair<Address, PacketQueue1*> QueueMapPair1;
 //
 // The CbrSender class is derived from FIFONode. 
 //
-class Router : public FIFONode 
-{
+
+class FIFONode : public Node {
+    
  public:
-    Router(Address a, int b);
-    ~Router();
+    FIFONode(Address a, 			// Node address
+             int queue_size);			// Number of packets
+    ~FIFONode();
+
     // Send a packet: return 0 on failure, 1 on success
     int send(Packet* packet);		// packet to send
     
@@ -56,7 +66,7 @@ class Router : public FIFONode
     void send_it(Address nhop);
     
     int		max_queue_size;			// Number of packets in queue
-    QueueMap1	queue_map;			// Map of queues per nexthop
+    QueueMap	queue_map;			// Map of queues per nexthop
     int		pending_send;			// Boolean
 };
 
