@@ -38,6 +38,7 @@ class Host : public FIFONode {
 	void receive(Packet* pkt);
 	void send_file();			// Incoming packet
 	void sync();
+	void reset();
 	void sent_window_sync(DTPPacket* pkt);
 	void recv_window_sync(DTPPacket* pkt);
 	void insert_p(Time s,Address d,char* f);
@@ -67,7 +68,7 @@ class Host : public FIFONode {
     Address	destination;		// Target address
     Time	start;			// Start sending at
     Time	retrans;	// Inter-packet time
-    int		packets_to_send;	// number of packets
+    //int		packets_to_send;	// number of packets
     int		sent_so_far;
     int		recv_so_far;
     bool        write;

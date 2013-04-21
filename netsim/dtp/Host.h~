@@ -49,7 +49,7 @@ class Host : public FIFONode {
 	int term_bit;
 	int     retrans_bit;
 	int packets_in_window;
-	int window_size;
+	float window_size;
 	DTPPacket* retransmit_pkt;
 	//DTPPacket* pkt11;
 	SendMap dest_map;

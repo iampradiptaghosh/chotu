@@ -16,7 +16,7 @@
 #include <stdio.h>
 #define MAX_QUEUE 99999
 #define timeout 4000
-#define K 1.5
+#define K 4
 #define alpha 0.125
 #define beta 0.25
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
@@ -28,14 +28,34 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
    packets_in_window=0;
    window_size=5;
    ter_seq=MAX_QUEUE;
+   sent_so_far=0;
+   recv_so_far=0;
    RTO=timeout;
    ECN=0;
+   flag=0;
+   last_ack=0;
    TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
 
 Host::~Host()
 {
     // Empty
+}
+void
+Host::reset()
+{
+	sync_bit=1;
+        term_bit=0;
+        retrans=0;
+        retrans_bit=0;
+        packets_in_window=0;
+        window_size=5;
+        ter_seq=MAX_QUEUE;
+        RTO=timeout;
+        ECN=0;
+        flag=0;
+        sent_so_far=0;
+        recv_so_far=0;
 }
 void
 Host::get_dest(Packet* pkt)
@@ -46,7 +66,8 @@ void
 Host::receive(Packet* pkt)
 {
    	TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
-	((DTPPacket*)pkt)->print_header();
+	((DTPPacket*)pkt)->print();
+	//((DTPPacket*)pkt)->print_header();
 	//cout<<term_bit<<endl;
 	write=0;
 	flag=0;
@@ -74,7 +95,8 @@ Host::receive(Packet* pkt)
 			handle_timer((void*)1);
 			retrans=scheduler->time() +RTO;
 			set_timer(retrans, NULL);
-			cout<<"Next Retransmit:"<<retrans<<endl;
+			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
+			//cout<<"Next Retransmit:"<<retrans<<endl;
 			retrans_bit=1;
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN-ACK to node %d\n",scheduler->time(),address(),destination);
 			
@@ -207,7 +229,7 @@ Host::receive(Packet* pkt)
         	                if (send(pkt1)) 
                                 {
                                    TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	                           pkt1->print_header();
+	                           pkt1->print();//_header();
 	                         }
 	                        TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
 	                        term_bit=2;
@@ -260,7 +282,7 @@ Host::handle_timer(void* cookie)
 			last_transmit=scheduler->time();
 			retrans=scheduler->time() +RTO;
 			set_timer(retrans, NULL);
-			cout<<"Next Retransmit:"<<retrans<<endl;
+			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 			retrans_bit=1;
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN to node %d\n",scheduler->time(),address(),destination);
 		}
@@ -275,7 +297,7 @@ Host::handle_timer(void* cookie)
 			{
 			retrans=scheduler->time() +RTO;
 			set_timer(retrans, NULL);
-			cout<<"Next Retransmit:"<<retrans<<endl;
+			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 			retrans_bit=2;
 			//cout<<"kk";
 			copy_pkt(pkt,retransmit_pkt);
@@ -284,8 +306,10 @@ Host::handle_timer(void* cookie)
 			pkt->ECN1=ECN;
 			if (send(pkt)) {
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
-	                pkt->print_header();
+	                pkt->print();//_header();
 	                }
+	                window_size=window_size/2;
+	                TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
 	                }
 	                //cout<<"kk";
 	                goto timer_end;
@@ -312,7 +336,7 @@ Host::handle_timer(void* cookie)
 //fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
 		retrans=scheduler->time() +RTO;
 		set_timer(retrans, NULL);
-		cout<<"Next Retransmit:"<<retrans<<endl;
+		TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 		TRACE(TRL3,"RETRANSMIT");
 //fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
 	} 
@@ -322,7 +346,7 @@ Host::handle_timer(void* cookie)
  	pkt->sync_bit=sync_bit;
     if (send(pkt)) {
        TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	   pkt->print_header();
+	   pkt->print();//_header();
 	   }
 	
 	timer_end: return;
@@ -338,7 +362,8 @@ Host::sync()
 	destination = newpair->a;
         dest_map.erase(head);
 	packets_to_send = 1;
-	cout<<newpair->name<<endl;
+	TRACE(TRL4,"The new file to be transfered from DTP-Host %d is: %s\n",address(),newpair->name);
+	//cout<<newpair->name<<endl;
 	in_file.open (newpair->name, ios::in); 
 	Node* nd = (scheduler->get_node)(destination);
 	char name[99999];
@@ -408,7 +433,7 @@ Host::send_file()
 		pkt->ECN1=ECN;
                 pkt->source = address();
                 pkt->destination = destination;
-                pkt->length = sizeof(Packet)+HEADER_SIZE+PAYLOAD_SIZE;
+                pkt->length = sizeof(Packet)+HEADER_SIZE+i;
 	        //fprintf(stderr,"\n %d",sent_so_far)
 	        pkt->id = sent_so_far;
 	        pkt->ack_id =recv_so_far;
@@ -417,7 +442,7 @@ Host::send_file()
  	        if (send(pkt)) 
                 {
                         TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	                pkt->print_header();
+	                pkt->print();//_header();
 	        }
 	        {
 	                /*int sss=(pkt11->id);
@@ -454,8 +479,8 @@ Host::send_file()
 	        if(!sent_window.empty())
 	        {
 	                retransmit_pkt=(*head1).second;
-	                cout<<"NEW RETRANS PACKET:"<<endl<<endl;
-	                retransmit_pkt->print_header();
+	                //cout<<"NEW RETRANS PACKET:"<<endl<<endl;
+	                //retransmit_pkt->print_header();
 	        }
 	        else
                         retransmit_pkt=NULL;
@@ -465,7 +490,7 @@ Host::send_file()
 	        retrans_bit=2;
 	       	retrans=scheduler->time() +RTO;
 	       	set_timer(retrans, NULL);
-	       	cout<<"Next Retransmit:"<<retrans<<endl;
+	       	TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 	}
 	//display();		        
         return;
@@ -546,7 +571,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
                 if (send(pkt2)) 
                 {
                         TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-                        pkt2->print_header();
+                        pkt2->print();//_header();
                 }
                 TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
                 term_bit=2;
@@ -562,7 +587,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
         //cout<<address()<<endl;
         //display();
         //cout<<"jddjdkdkd"<<endl;
-        cout<<"last_ack="<<last_ack<<endl;
+        //cout<<"last_ack="<<last_ack<<endl;
          if(pkt->ack_id<=last_ack)
         {
                 //retransmit();
@@ -572,7 +597,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
                 //DTPPacket*	pkt10 = new DTPPacket;
 	       // copy_pkt(pkt10,pkt);
 	        
-	        //congestion_control(pkt);
+	        congestion_control(pkt);
 	        
                 if(retrans>=scheduler->time())
 	        {
@@ -632,8 +657,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	RTT=(1 - alpha) * RTT + alpha *(scheduler->time()-last_transmit);
 	
 	RTO = (RTT + K*RTTVAR);
-	cout<<"Current RTT:"<<scheduler->time()-last_transmit<<endl;
-	cout<<"Current RTO:"<<RTO<<endl;
+	TRACE(TRL4,"Current RTT: %d\n Current RTO: %d",scheduler->time()-last_transmit,RTO);
         id_time_iter id_timer = send_time.find(pkt->ack_id+1);
 
 	                //cout<<"kk";	
@@ -645,7 +669,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	{
 	        last_transmit=scheduler->time();	
 	}
-	cout<<"last_transmit:"<<last_transmit<<endl;           
+	//cout<<"last_transmit:"<<last_transmit<<endl;           
 	        
 	Window1_iter head1 =sent_window.begin();
 	if(head1!=sent_window.end())
@@ -663,16 +687,16 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	        if (send(pkt9)) 
 	        {
                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
-	                pkt9->print_header();
+	                pkt9->print();//_header();
 	        }
 	        }
 	        retrans_bit=2;
                 retrans=scheduler->time() +RTO;
                 set_timer(retrans, NULL);
-                cout<<"Next Retransmit:"<<retrans<<endl;
+                TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
         }       
         }
-        cout<<"last_ack="<<last_ack<<endl;
+        //cout<<"last_ack="<<last_ack<<endl;
         return;
 }
 void 
@@ -711,7 +735,7 @@ Host::display(Window1 w1)
 	        {
 	                pkt1=(*head1).second;
 	                //cout<<"dddd"<<endl<<endl;
-	                pkt1->print_header();
+	                pkt1->print();//_header();
 	                head1=w1.upper_bound(pkt1->id);
 	        }
 	}
@@ -764,7 +788,7 @@ Host::terminate(Address d)
         if (send(pkt12)) 
         {
                 TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	        pkt12->print_header();
+	        pkt12->print();//_header();
 	}
 	   //retrans=scheduler->time() +timeout;
         //set_timer(retrans, NULL);

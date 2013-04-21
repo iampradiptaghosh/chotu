@@ -1,7 +1,8 @@
 #include <cstdio>
 
-#define PAYLOAD_SIZE 13//(MTU - sizeof(Packet))
-#define HEADER_SIZE (2*sizeof(int))
+
+#define HEADER_SIZE (sizeof(int)+sizeof(short)+4*sizeof(bool))
+#define PAYLOAD_SIZE (MTU - sizeof(Packet)-HEADER_SIZE)
 //
 // DTPPacket is derived from Packet and adds a data field.
 //
