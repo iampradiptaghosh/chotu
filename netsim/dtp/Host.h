@@ -58,6 +58,7 @@ class Host : public FIFONode {
 	char out_file[1000];
 	bool sender;
 	bool ECN;
+	int Window_threshold;
 	Window1 sent_window;	
         Window1 recv_window;
         id_time send_time;

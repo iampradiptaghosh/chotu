@@ -19,6 +19,8 @@
 #define K 4
 #define alpha 0.125
 #define beta 0.25
+#define Initial_Window 1
+#define Initial_Window_Threshold 5
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
         sync_bit=1;
@@ -26,7 +28,8 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
         retrans=0;
         retrans_bit=0;
         packets_in_window=0;
-        window_size=5;
+        window_size=Initial_Window;
+        Window_threshold=Initial_Window_Threshold;
         ter_seq=MAX_QUEUE;
         sent_so_far=0;
         recv_so_far=0;
@@ -55,7 +58,8 @@ Host::reset()
         retrans=0;
         retrans_bit=0;
         packets_in_window=0;
-        window_size=5;
+        window_size=Initial_Window;
+        Window_threshold=Initial_Window_Threshold;
         ter_seq=MAX_QUEUE;
         RTO=timeout;
         ECN=0;
@@ -329,7 +333,9 @@ Host::handle_timer(void* cookie)
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
 	                pkt->print();//_header();
 	                }
-	                window_size=window_size/2;
+	                
+	                Window_threshold=window_size/2;
+	                window_size=1;
 	                TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
 	                }
 	                //cout<<"kk";
@@ -736,8 +742,23 @@ Host::congestion_control(DTPPacket* pkt)
         {
                 int j=(pkt->ack_id)-last_ack;
                // last_ack;
-                //cout<<"aa"<<pkt->ack_id<<"dd"<<j<<endl;
-                window_size=window_size+j;
+                //cout<<"aa"<<Window_threshold<<"dd"<<j<<endl;
+                if(window_size+j<Window_threshold)
+                {
+                        window_size=window_size+j;
+                }
+                else if(window_size<Window_threshold&&Window_threshold<=window_size+j)
+                {
+                        //cout<<"gg"<<endl;
+                        window_size=Window_threshold;
+                }
+                else if(Window_threshold<=window_size)
+                {
+                        window_size=window_size+((float)j)/window_size;
+                        //cout<<"ff"<<Window_threshold<<endl;
+                }
+                else;
+                
                 
         }
         TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
