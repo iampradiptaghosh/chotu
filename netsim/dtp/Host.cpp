@@ -21,20 +21,26 @@
 #define beta 0.25
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
-   sync_bit=1;
-   term_bit=0;
-   retrans=0;
-   retrans_bit=0;
-   packets_in_window=0;
-   window_size=5;
-   ter_seq=MAX_QUEUE;
-   sent_so_far=0;
-   recv_so_far=0;
-   RTO=timeout;
-   ECN=0;
-   flag=0;
-   last_ack=0;
-   TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
+        sync_bit=1;
+        term_bit=0;
+        retrans=0;
+        retrans_bit=0;
+        packets_in_window=0;
+        window_size=5;
+        ter_seq=MAX_QUEUE;
+        sent_so_far=0;
+        recv_so_far=0;
+        RTO=timeout;
+        ECN=0;
+        flag=0;
+        last_ack=0;
+        sent_so_far=0;
+        recv_so_far=0;
+        RTT=0;
+        sent_window.clear();
+        recv_window.clear();
+        sender=0;
+        TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
 
 Host::~Host()
@@ -54,8 +60,14 @@ Host::reset()
         RTO=timeout;
         ECN=0;
         flag=0;
+        last_ack=0;
         sent_so_far=0;
         recv_so_far=0;
+        RTT=0;
+        sent_window.clear();
+        recv_window.clear();
+        sender=0;
+        
 }
 void
 Host::get_dest(Packet* pkt)
@@ -210,6 +222,8 @@ Host::receive(Packet* pkt)
 		     
 		     if(!sender)
 		     {
+		        if(term_bit!=2)
+		        {
 		        if(((DTPPacket*)pkt)->id==recv_so_far)
 		        {
 		                DTPPacket*	pkt1 = new DTPPacket;
@@ -232,13 +246,14 @@ Host::receive(Packet* pkt)
 	                           pkt1->print();//_header();
 	                         }
 	                        TRACE(TRL4,"(Time:%d) node %d Sent FIN-ACK to node %d\n",scheduler->time(),address(),destination);
-	                        term_bit=2;
+	                        //term_bit=2;
 	                        //terminate(destination);
 		        }
 		        else
 		        {
 		                term_bit=1;
 		                ter_seq=((DTPPacket*)pkt)->id;
+		        }
 		        }
 		      }
 		      else
@@ -258,6 +273,8 @@ Host::receive(Packet* pkt)
 		                term_bit=2;
 		                sent_window_sync((DTPPacket*)pkt);
 		                TRACE(TRL3, "Tore down FDTP flow from %d to %d (%d)\n", address(),destination,scheduler->time());
+		                Node* nd = (scheduler->get_node)(destination);
+		                ((Host*)nd)->term_bit=2;
 		                 //cout<<"ccc"<<term_bit<<endl;
 		               // sent_window_sync((DTPPacket*)pkt);
 		                
@@ -268,15 +285,18 @@ Host::receive(Packet* pkt)
 	
 	
    // if(pkt)
- //   delete pkt;
+    delete pkt;
 } 
 void
 Host::handle_timer(void* cookie)
 {
     
 	DTPPacket*	pkt = new DTPPacket;
-	if(sync_bit==1&&term_bit==0)
+	if((sync_bit==1&&term_bit==0)||(sync_bit==3&&term_bit==2))
 	{
+	        SendMap_iter head = dest_map.find(scheduler->time());
+		if(head!=dest_map.end())
+		{
 		if(retrans==0)
 		{	sync();
 			last_transmit=scheduler->time();
@@ -285,6 +305,7 @@ Host::handle_timer(void* cookie)
 			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 			retrans_bit=1;
 			TRACE(TRL4,"(Time:%d) node %d Sent SYN to node %d\n",scheduler->time(),address(),destination);
+		}
 		}
 	}
         if(sync_bit==3)
@@ -361,7 +382,6 @@ Host::sync()
 	sendpair* newpair=(*head).second;
 	destination = newpair->a;
         dest_map.erase(head);
-	packets_to_send = 1;
 	TRACE(TRL4,"The new file to be transfered from DTP-Host %d is: %s\n",address(),newpair->name);
 	//cout<<newpair->name<<endl;
 	in_file.open (newpair->name, ios::in); 
@@ -372,7 +392,11 @@ Host::sync()
         strcpy((((Host*)nd)->out_file),name);
 	ofstream file1(name, ios::out);
 	file1.close();
-	sync_bit=1;
+	reset();
+	((Host*)nd)->reset();
+	sender=1;
+	
+	/*sync_bit=1;
 	term_bit=0;
 	retrans=0;
 	retrans_bit=0;
@@ -382,7 +406,7 @@ Host::sync()
 	((Host*)nd)->retrans_bit=0;
 	flag=0;
 	((Host*)nd)->flag=0;
-    //sent_so_far = 0;
+    //sent_so_far = 0;*/
 }
 
 

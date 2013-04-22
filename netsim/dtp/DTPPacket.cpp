@@ -14,8 +14,8 @@ void
 DTPPacket::print()
 {
     print_header();
-    if(length>HEADER_SIZE+sizeof(Packet))
-    Packet::print_payload((char *) &data[0], length-(HEADER_SIZE+sizeof(Packet)), false);
+    //if(length>HEADER_SIZE+sizeof(Packet))
+    //Packet::print_payload((char *) &data[0], length-(HEADER_SIZE+sizeof(Packet)), false);
 }
 void
 DTPPacket::print_header()
