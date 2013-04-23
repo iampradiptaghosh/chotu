@@ -34,7 +34,7 @@ PacketQueue1::enq(Packet* p)
     if (packet_queue.size() < max_size) {
         if (packet_queue.size() >= max_size/2)
         {
-                cout<<"Set ECN"<<endl;
+                //cout<<"Set ECN"<<endl;
                 ((DTPPacket*)p)->ECN=1;
                 //cout<<((DTPPacket*)p)->ECN<<endl;
         }
@@ -60,6 +60,39 @@ PacketQueue1::deq()
           node, neighbor, (int) packet_queue.size());
     return p;
 }
+/*
+Packet*
+PacketQueue1::deq()
+{
+    Packet* p;
+    Packet* q;
+    int i;
+
+    if (packet_queue.empty()) {
+        return NULL;
+    }
+    i=packet_queue.size()-1;
+    p = packet_queue.front();
+    packet_queue.pop();
+    while(i>=1)
+    {
+        i--;
+        q = packet_queue.front();
+        packet_queue.pop();
+        if(((DTPPacket*)q)->file_size < ((DTPPacket*)p)->file_size)
+        {
+                packet_queue.push(p);
+                p=q;
+        }
+        else
+                packet_queue.push(q);  
+        cout<<node<<"aa:"<<((DTPPacket*)p)->file_size<<"bb:"<<((DTPPacket*)q)->file_size<<endl;                     
+    }
+    TRACE(TRL1, "Queue size at (%d, %d) is %d\n", 
+          node, neighbor, (int) packet_queue.size());
+    return p;
+}*/
+
 
 Router::Router(Address a, int b) : FIFONode(a,b)	// Null queue size
 {
@@ -121,13 +154,17 @@ Router::send_it(Address nhop)
     if (queue->pending_send) {
         return;
     }
-
+    
     pkt = queue->deq();
     if (pkt) {
         TRACE(TRL2, "Forwarding at %d to nexthop %d packet (src %d, dst %d, id %d)\n",
               address(), nhop, pkt->source, pkt->destination, pkt->id);
         Node::send(pkt, nhop);
         queue->pending_send = 1;
+   
+    int i=topology->link_trans_delay(pkt, address(), nhop);
+    float j=((float)(pkt->length * 8))/((float)i);
+    //cout<<"Link rate:"<<i<<"l"<<j<<endl;
     }
     return;
 }

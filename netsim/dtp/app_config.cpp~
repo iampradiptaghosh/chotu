@@ -11,7 +11,8 @@ void
 Config::process_app_command(char* id)
 {
     // Insert app-level commands here
-    if (strcmp(id, "Router") == 0) {
+     cout<<"bb"<<endl;
+     if (strcmp(id, "Router") == 0) {
         if (config_argnum != 2) {
             FATAL("Incorrect number of args for: %s", id);
         }
@@ -30,7 +31,7 @@ Config::process_app_command(char* id)
         FDTPFlow* cr = new FDTPFlow((Address) config_args[0].numval,
                                       (Address) config_args[1].numval,
                                       (Time) config_args[2].numval,
-                                      (char*) config_args[3].numval);
+                                      config_args[3].strval);
     }
     config_argnum = 0;
     return;

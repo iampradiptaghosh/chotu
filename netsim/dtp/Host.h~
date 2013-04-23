@@ -66,6 +66,7 @@ class Host : public FIFONode {
         id_time send_time;
         int     ECNcount;
         int     ACKcount;
+        int     ACKcounter;
         bool    ACKcount_flag;
         float   alpha1;
  private:

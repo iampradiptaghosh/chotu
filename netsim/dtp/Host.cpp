@@ -14,6 +14,14 @@
 #include <string>
 #include <math.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+
+
+
+
 #define MAX_QUEUE 99999
 #define timeout 4000
 #define K 4
@@ -22,6 +30,11 @@
 #define beta 0.25
 #define Initial_Window 1
 #define Initial_Window_Threshold 1000
+
+
+
+
+
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
         sync_bit=1;
@@ -44,8 +57,9 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
         sent_window.clear();
         recv_window.clear();
         sender=0;
-        alpha1=0;
         ACKcount_flag=0;
+        alpha1=0;
+        File_size=0;
         TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
 
@@ -76,6 +90,7 @@ Host::reset()
         sender=0;
         ACKcount_flag=0;
         alpha1=0;
+        //File_size=0;
         
 }
 void
@@ -248,7 +263,7 @@ Host::receive(Packet* pkt)
                                 pkt1->ACK=1;
                                 pkt1->ECN=0;
                                 pkt1->ECN1=ECN;
-
+                                pkt1->file_size=File_size;
         	                if (send(pkt1)) 
                                 {
                                    TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
@@ -341,6 +356,7 @@ Host::handle_timer(void* cookie)
 			pkt->ack_id =recv_so_far;
 			pkt->ECN=0;
 			pkt->ECN1=ECN;
+			pkt->file_size=File_size;
 			if (send(pkt)) 
 			{
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
@@ -371,6 +387,7 @@ Host::handle_timer(void* cookie)
         pkt->source = address();
         pkt->destination = destination;
         pkt->length = HEADER_SIZE;
+        pkt->file_size = File_size;
         sent_so_far+=1;
         
         //Retransmit of Connection setup Packet
@@ -417,10 +434,17 @@ Host::sync()
 	sendpair* newpair=(*head).second;
 	destination = newpair->a;
         dest_map.erase(head);
-	TRACE(TRL4,"The new file to be transfered from DTP-Host %d is: %s\n",address(),newpair->name);
+	
 	//cout<<newpair->name<<endl;
 	in_file.open (newpair->name, ios::in); 
-	Node* nd = (scheduler->get_node)(destination);
+	struct stat filestatus;
+        stat(newpair->name, &filestatus );
+        TRACE(TRL4,"The new file to be transfered from DTP-Host %d is: %s (Size: %ld bytes)\n",address(),newpair->name,filestatus.st_size);
+        //cout << "File Size: "<<filestatus.st_size << " bytes\n";
+
+        File_size=filestatus.st_size;
+        cout << "File Size: "<<File_size << " bytes\n"<<endl;
+        Node* nd = (scheduler->get_node)(destination);
 	char name[99999];
 	strcpy(name,newpair->name);
 	strcat(name,"_dest");
@@ -490,6 +514,8 @@ Host::send_file()
                 pkt->ACK=0;
                 pkt->ECN=0;
 		pkt->ECN1=ECN;
+		pkt->file_size=File_size;
+		//cout << "File Size: "<<File_size << " bytes\n"<<endl;
                 pkt->source = address();
                 pkt->destination = destination;
                 pkt->length = HEADER_SIZE+i;
@@ -627,6 +653,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
                 pkt2->ACK=1;
                 pkt2->ECN=0;
                 pkt2->ECN1=ECN;
+                pkt2->file_size=File_size;
                 if (send(pkt2)) 
                 {
                         TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
@@ -673,6 +700,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 			                pkt_r->ack_id =recv_so_far;
 			                pkt_r->ECN=0;
 			                pkt_r->ECN1=ECN;
+			                pkt_r->file_size=File_size;
 			                if (send(pkt_r)) 
 			                {
                                                 TRACE(TRL3,"Retransmit packet (Due to Three Dup-Acks) from DTP-Host: %d\n",address());
@@ -774,6 +802,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
               	DTPPacket*	pkt9 = new DTPPacket;
 	        copy_pkt(pkt9,retransmit_pkt);
 	        pkt9->ack_id =recv_so_far;
+	        pkt9->file_size=File_size;
 	        if (send(pkt9)) 
 	        {
                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
@@ -812,7 +841,7 @@ Host::congestion_control(DTPPacket* pkt)
         {
                 if(ACKcount)
                 alpha1=alpha1*(1-G)+G*((float)ECNcount)/((float)ACKcount);
-                cout<<"alpha1"<<alpha1<<endl;
+                //cout<<"alpha1"<<alpha1<<endl;
                 ACKcount=floor(window_size);
                 ACKcounter=ACKcount;
                 ECNcount=0;
@@ -822,6 +851,11 @@ Host::congestion_control(DTPPacket* pkt)
         
         
         int j=(pkt->ack_id)-last_ack;
+        if(File_size)
+                File_size=File_size-j*PAYLOAD_SIZE;
+        if(File_size<=0)
+                File_size=0;        
+                
         if(window_size+j<Window_threshold)
         {
                 window_size=window_size+j;
@@ -902,6 +936,7 @@ void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
         strcpy(pkt_to->data,pkt_from->data);
         pkt_to->ECN=pkt_from->ECN;
         pkt_to->ECN1=pkt_from->ECN1;
+        pkt_to->file_size=pkt_from->file_size;
 }
 
 void Host::insert_p(Time s,Address d,char* f)
@@ -931,6 +966,7 @@ Host::terminate(Address d)
         pkt12->ACK=0;
         pkt12->ECN=0;
         pkt12->ECN1=ECN;
+        pkt12->file_size=File_size;
         copy_pkt(pkt11,pkt12);
         Window1Pair entry(pkt11->id,pkt11);
         sent_window.insert(entry);

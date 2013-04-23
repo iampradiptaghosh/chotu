@@ -20,6 +20,6 @@ DTPPacket::print()
 void
 DTPPacket::print_header()
 {
-	TRACE(TRL3, "Packet Header:: source: %d, destination: %d, id: %d, ack_id %d, length: %d, Sync_bit: %d, FIN Flag: %d, ACK Flag:%d, ECN (Set by Router)= %d, ECN (Set by receiver)= %d\n",
-          (int) source, (int) destination, id, ack_id, length,sync_bit,FIN,ACK,ECN,ECN1 );
+	TRACE(TRL3, "Packet Header:: source: %d, destination: %d, id: %d, ack_id %d, length: %d, Sync_bit: %d, FIN Flag: %d, ACK Flag:%d, ECN (Set by Router)= %d, ECN (Set by receiver)= %d, Remaining File_Size = %ld bytes\n",
+          (int) source, (int) destination, id, ack_id, length,sync_bit,FIN,ACK,ECN,ECN1,file_size );
 }

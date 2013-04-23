@@ -13,7 +13,9 @@ class PacketQueue1 {
 
     // Return first packet, else NULL
     Packet* deq();
-
+        
+    //Packet* get_next_pkt();
+    
  private:
     queue<Packet*>	packet_queue;	// Queue of packets
     int			max_size;	// Max queue size
@@ -46,7 +48,7 @@ class Router : public FIFONode
     // Receive a packet
     // Needs to be defined by the inheriting class
     void receive(Packet* packet);	// received packet
-
+    
     // Handle a timer
     // Needs to be defined by the inheriting class
     void handle_timer(void* cookie);

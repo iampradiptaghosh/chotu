@@ -1,7 +1,7 @@
 #include <cstdio>
 
 
-#define HEADER_SIZE sizeof(Packet)+(sizeof(int)+sizeof(short)+4*sizeof(bool))
+#define HEADER_SIZE sizeof(Packet)+(sizeof(int)+sizeof(short)+4*sizeof(bool)+sizeof(long int))
 #define PAYLOAD_SIZE 15//(MTU - sizeof(Packet)-HEADER_SIZE)
 //
 // DTPPacket is derived from Packet and adds a data field.
@@ -17,6 +17,7 @@ class DTPPacket : public Packet {
         bool ECN1;
         bool ACK;
         int ack_id;
+        long int file_size;
 	void print();
 	void print_header();
         char data[PAYLOAD_SIZE];
