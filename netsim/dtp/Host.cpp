@@ -233,7 +233,7 @@ Host::receive(Packet* pkt)
 		                DTPPacket*	pkt1 = new DTPPacket;
                                 pkt1->source = address();
                                 pkt1->destination = destination;
-                                pkt1->length = sizeof(Packet)+HEADER_SIZE;
+                                pkt1->length = HEADER_SIZE;
                                 if(write)
                                         sent_so_far+=1;
                                 pkt1->id = sent_so_far;
@@ -291,11 +291,16 @@ Host::receive(Packet* pkt)
    // if(pkt)
     delete pkt;
 } 
+
+
 void
 Host::handle_timer(void* cookie)
 {
     
 	DTPPacket*	pkt = new DTPPacket;
+	//if(*cookie==1)
+	//cout<<"Prad:"<<(int*)cookie<<endl;
+	//New Connection Setup//
 	if((sync_bit==1&&term_bit==0)||(sync_bit==3&&term_bit==2))
 	{
 	        SendMap_iter head = dest_map.find(scheduler->time());
@@ -312,6 +317,8 @@ Host::handle_timer(void* cookie)
 		}
 		}
 	}
+        
+        //Retransmit of Data Packet//
         if(sync_bit==3)
 	{
 		if(retrans_bit==2)
@@ -320,7 +327,7 @@ Host::handle_timer(void* cookie)
 			//last_transmit=scheduler->time();
 			if(retrans==scheduler->time())
 			{
-			retrans=scheduler->time() +RTO;
+			retrans=scheduler->time() +RTO; ////Implement Exponential Backoff////
 			set_timer(retrans, NULL);
 			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 			retrans_bit=2;
@@ -329,9 +336,10 @@ Host::handle_timer(void* cookie)
 			pkt->ack_id =recv_so_far;
 			pkt->ECN=0;
 			pkt->ECN1=ECN;
-			if (send(pkt)) {
+			if (send(pkt)) 
+			{
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
-	                pkt->print();//_header();
+	                                pkt->print();//_header();
 	                }
 	                
 	                Window_threshold=window_size/2;
@@ -342,39 +350,55 @@ Host::handle_timer(void* cookie)
 	                goto timer_end;
 		}
 	}
-    //char* d = &(pkt->data[0]);
-   // pkt->FIN=term_bit;
-    pkt->FIN=0;
-    pkt->ACK=0;
-    pkt->ECN=0;
-    pkt->ECN1=ECN;
-    if(term_bit==2&&!sender)
-    {
-        pkt->FIN=1;
-        pkt->ACK=1;
-    }
-    pkt->source = address();
-    pkt->destination = destination;
-    pkt->length = sizeof(Packet)+HEADER_SIZE;
-    sent_so_far+=1;
+        
+        
+        //char* d = &(pkt->data[0]);
+        // pkt->FIN=term_bit;
+        pkt->FIN=0;
+        pkt->ACK=0;
+        pkt->ECN=0;
+        pkt->ECN1=ECN;
+        if(term_bit==2&&!sender)
+        {
+                pkt->FIN=1;
+                pkt->ACK=1;
+        }
+        pkt->source = address();
+        pkt->destination = destination;
+        pkt->length = HEADER_SIZE;
+        sent_so_far+=1;
+        
+        //Retransmit of Connection setup Packet
 	if(retrans==scheduler->time()&&retrans_bit==1)
 	{
-		 sent_so_far-=1;
-//fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
+                sent_so_far-=1;
 		retrans=scheduler->time() +RTO;
 		set_timer(retrans, NULL);
 		TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
 		TRACE(TRL3,"RETRANSMIT");
-//fprintf(stderr,"Node=%d retrans= %d, Time= %d\n",address(),retrans,scheduler->time());
+		pkt->id = sent_so_far;
+	        pkt->ack_id =recv_so_far;
+         	pkt->sync_bit=sync_bit;
+                if (send(pkt)) 
+                {
+                       TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
+                       pkt->print();//_header();
+                }
+                goto timer_end;
 	} 
+	
+	
+	//For Connection Setup and Acks
+	
 	//fprintf(stderr,"\n %d",sent_so_far)
 	pkt->id = sent_so_far;
 	pkt->ack_id =recv_so_far;
  	pkt->sync_bit=sync_bit;
-    if (send(pkt)) {
-       TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
-	   pkt->print();//_header();
-	   }
+        if (send(pkt)) 
+        {
+                TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
+	        pkt->print();//_header();
+        }
 	
 	timer_end: return;
 }
@@ -463,7 +487,7 @@ Host::send_file()
 		pkt->ECN1=ECN;
                 pkt->source = address();
                 pkt->destination = destination;
-                pkt->length = sizeof(Packet)+HEADER_SIZE+i;
+                pkt->length = HEADER_SIZE+i;
 	        //fprintf(stderr,"\n %d",sent_so_far)
 	        pkt->id = sent_so_far;
 	        pkt->ack_id =recv_so_far;
@@ -588,7 +612,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
                 DTPPacket*	pkt2 = new DTPPacket;
                 pkt2->source = address();
                 pkt2->destination = destination;
-                pkt2->length = sizeof(Packet)+HEADER_SIZE;
+                pkt2->length = HEADER_SIZE;
                 sent_so_far+=1;
                 pkt2->id = sent_so_far;
                 recv_so_far+=1;
@@ -618,15 +642,46 @@ void Host:: sent_window_sync(DTPPacket* pkt)
         //display();
         //cout<<"jddjdkdkd"<<endl;
         //cout<<"last_ack="<<last_ack<<endl;
-         if(pkt->ack_id<=last_ack)
+         if(pkt->ack_id<last_ack)
         {
                 //retransmit();
+        }
+        else if(pkt->ack_id==last_ack)
+        {
+                dup_ack_count+=1;
+                cout<<"DUP:"<<dup_ack_count<<endl;
+                if((dup_ack_count%2)==0)
+                {
+                        cout<<"DUP:"<<dup_ack_count<<endl;
+                        window_size=window_size/2;
+                        Window_threshold=window_size;
+                        if(retrans_bit==2)
+		        {	
+			        if(retrans>scheduler->time())
+			        {
+			                cancel_timer(retrans, NULL);
+			                retrans=scheduler->time() +RTO; 
+			                set_timer(retrans, NULL);
+			                TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
+			                DTPPacket *pkt_r= new DTPPacket;
+			                copy_pkt(pkt_r,retransmit_pkt);
+			                pkt_r->ack_id =recv_so_far;
+			                pkt_r->ECN=0;
+			                pkt_r->ECN1=ECN;
+			                if (send(pkt_r)) 
+			                {
+                                                TRACE(TRL3,"Retransmit packet (Due to Three Dup-Acks) from DTP-Host: %d\n",address());
+        	                                pkt_r->print();//_header();
+        	                        }
+        	               }
+	                }
+                }
         }
         else
         {//cout<<"jddjdkdkd"<<endl;
                 //DTPPacket*	pkt10 = new DTPPacket;
 	       // copy_pkt(pkt10,pkt);
-	        
+	        dup_ack_count=0;
 	        congestion_control(pkt);
 	        
                 if(retrans>=scheduler->time())
@@ -818,7 +873,7 @@ Host::terminate(Address d)
 	DTPPacket*	pkt12 = new DTPPacket;
         pkt12->source = address();
         pkt12->destination = destination;
-        pkt12->length = sizeof(Packet)+HEADER_SIZE;
+        pkt12->length = HEADER_SIZE;
         sent_so_far+=1;
         pkt12->id = sent_so_far;
 	pkt12->ack_id =recv_so_far;

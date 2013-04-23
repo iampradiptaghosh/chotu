@@ -46,37 +46,37 @@ class Host : public FIFONode {
 	void display(Window1 w1);
 	void congestion_control(DTPPacket* pkt);
 	void copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from);
-	int sync_bit;
-	int term_bit;
+	
+	
+	
+	int     sync_bit;
+	int     term_bit;
 	int     retrans_bit;
-	int packets_in_window;
-	float window_size;
+	int     packets_in_window;
+	float   window_size;
 	DTPPacket* retransmit_pkt;
-	//DTPPacket* pkt11;
 	SendMap dest_map;
 	ifstream in_file;
-	char out_file[1000];
-	bool sender;
-	bool ECN;
-	
+	char    out_file[1000];
+	bool    sender;
+	bool    ECN;
+	int     Window_threshold;
 	Window1 sent_window;	
         Window1 recv_window;
         id_time send_time;
-	//int dest[MAX];
-	//int dest_count,dest_pointer;
+
  private:
-    Time RTO, last_transmit;
-    Address	destination;		// Target address
-    Time	start;			// Start sending at
-    Time	retrans;	// Inter-packet time
-    //int		packets_to_send;	// number of packets
-    int		sent_so_far;
-    int		recv_so_far;
-    bool        write;
-    int         last_ack;
-    int		ter_seq;
-    bool        flag;
-    Time RTT,RTTVAR;
+        Time    last_transmit;
+        Address	destination;		// Target address
+        Time	start;			// Start sending at
+        Time	retrans;	// Inter-packet time
+        int	sent_so_far;
+        int	recv_so_far;
+        bool    write;
+        int     last_ack;
+        int	ter_seq;
+        bool    flag;
+        Time    RTO,RTT,RTTVAR;
     	
 	
     
