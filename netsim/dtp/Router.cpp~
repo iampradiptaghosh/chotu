@@ -32,9 +32,9 @@ PacketQueue1::enq(Packet* p)
 {
     
     if (packet_queue.size() < max_size) {
-        if (packet_queue.size() >max_size)
+        if (packet_queue.size() >max_size/2)
         {
-                //cout<<"Set ECN"<<endl;
+                cout<<"Set ECN"<<endl;
                 ((DTPPacket*)p)->ECN=1;
                 //cout<<((DTPPacket*)p)->ECN<<endl;
         }
