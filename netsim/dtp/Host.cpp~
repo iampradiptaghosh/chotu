@@ -647,12 +647,12 @@ void Host:: sent_window_sync(DTPPacket* pkt)
                 //retransmit();
         }
         else if(pkt->ack_id==last_ack)
-        {/*
+        {
                 dup_ack_count+=1;
-                cout<<"DUP:"<<dup_ack_count<<endl;
+                //cout<<"DUP:"<<dup_ack_count<<endl;
                 if((dup_ack_count%2)==0)
                 {
-                        cout<<"DUP:"<<dup_ack_count<<endl;
+                        //cout<<"DUP:"<<dup_ack_count<<endl;
                         window_size=window_size/2;
                         Window_threshold=window_size;
                         if(retrans_bit==2)
@@ -675,7 +675,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
         	                        }
         	               }
 	                }
-                }*/
+                }
         }
         else
         {//cout<<"jddjdkdkd"<<endl;
@@ -842,17 +842,17 @@ Host::display(Window1 w1)
 }
 void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
 {
-                pkt_to->FIN=pkt_from->FIN;
-                pkt_to->ACK=pkt_from->ACK;
-                pkt_to->source = pkt_from->source;
-                pkt_to->destination = pkt_from->destination;
-                pkt_to->length = pkt_from->length;
-	        pkt_to->id = pkt_from->id;
-	        pkt_to->ack_id =pkt_to->ack_id;
- 	        pkt_to->sync_bit=pkt_from->sync_bit; 
-                strcpy(pkt_to->data,pkt_from->data);
-                pkt_to->ECN=pkt_from->ECN;
-		pkt_to->ECN1=pkt_from->ECN1;
+        pkt_to->FIN=pkt_from->FIN;
+        pkt_to->ACK=pkt_from->ACK;
+        pkt_to->source = pkt_from->source;
+        pkt_to->destination = pkt_from->destination;
+        pkt_to->length = pkt_from->length;
+        pkt_to->id = pkt_from->id;
+        pkt_to->ack_id =pkt_to->ack_id;
+        pkt_to->sync_bit=pkt_from->sync_bit; 
+        strcpy(pkt_to->data,pkt_from->data);
+        pkt_to->ECN=pkt_from->ECN;
+        pkt_to->ECN1=pkt_from->ECN1;
 }
 
 void Host::insert_p(Time s,Address d,char* f)
@@ -882,32 +882,15 @@ Host::terminate(Address d)
         pkt12->ACK=0;
         pkt12->ECN=0;
         pkt12->ECN1=ECN;
-	        copy_pkt(pkt11,pkt12);
-        	Window1Pair entry(pkt11->id,pkt11);
-        	sent_window.insert(entry);
+        copy_pkt(pkt11,pkt12);
+        Window1Pair entry(pkt11->id,pkt11);
+        sent_window.insert(entry);
         if (send(pkt12)) 
         {
                 TRACE(TRL3,"Sent packet from DTP-Host: %d\n",address());
 	        pkt12->print();//_header();
 	}
-	   //retrans=scheduler->time() +timeout;
-        //set_timer(retrans, NULL);
-	//retrans_bit=1;
+
 	TRACE(TRL4,"(Time:%d) node %d Sent FIN to node %d\n",scheduler->time(),address(),destination);
-/*	Window1_iter head1 =sent_window.begin();
-	        if(!sent_window.empty())
-	        {
-	                retransmit_pkt=(*head1).second;
-	                cout<<"NEW RETRANS PACKET:"<<endl<<endl;
-	                retransmit_pkt->print_header();
-	        }
-	        else
-                        retransmit_pkt=NULL;
-        if(retrans_bit==0&&retransmit_pkt!=NULL)
-	{
-	        retrans_bit=2;
-	       	retrans=scheduler->time() +RTO;
-	       	set_timer(retrans, NULL);
-	}
-*/			
+			
 }
