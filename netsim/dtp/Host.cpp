@@ -17,10 +17,11 @@
 #define MAX_QUEUE 99999
 #define timeout 4000
 #define K 4
+#define G 0.5
 #define alpha 0.125
 #define beta 0.25
 #define Initial_Window 1
-#define Initial_Window_Threshold 5
+#define Initial_Window_Threshold 1000
 Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
 {
         sync_bit=1;
@@ -43,6 +44,8 @@ Host::Host(Address a) : FIFONode(a,MAX_QUEUE)	// Null queue size
         sent_window.clear();
         recv_window.clear();
         sender=0;
+        alpha1=0;
+        ACKcount_flag=0;
         TRACE(TRL3,"Initialized host with address %d\n",a);// Empty
 }
 
@@ -71,6 +74,8 @@ Host::reset()
         sent_window.clear();
         recv_window.clear();
         sender=0;
+        ACKcount_flag=0;
+        alpha1=0;
         
 }
 void
@@ -642,7 +647,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
         //display();
         //cout<<"jddjdkdkd"<<endl;
         //cout<<"last_ack="<<last_ack<<endl;
-         if(pkt->ack_id<last_ack)
+        if(pkt->ack_id<last_ack)
         {
                 //retransmit();
         }
@@ -789,8 +794,52 @@ Host::congestion_control(DTPPacket* pkt)
 {
         //int i=window_size;
         TRACE(TRL3,"Previous Window Size at DTP-Host: %d is %f\n",address(),window_size);
-        if(pkt->ECN1==1)
+        if(ACKcount_flag)
         {
+                if(ACKcounter>0)
+                {
+                        ACKcounter--;
+                        if(pkt->ECN1==1)
+                        {
+                               ECNcount++;
+                        }
+               }
+                else
+                        ACKcount_flag=0;
+                        
+        }
+        else
+        {
+                if(ACKcount)
+                alpha1=alpha1*(1-G)+G*((float)ECNcount)/((float)ACKcount);
+                cout<<"alpha1"<<alpha1<<endl;
+                ACKcount=floor(window_size);
+                ACKcounter=ACKcount;
+                ECNcount=0;
+                ACKcount_flag=1;
+                window_size=window_size*(1-alpha1/2);
+        }
+        
+        
+        int j=(pkt->ack_id)-last_ack;
+        if(window_size+j<Window_threshold)
+        {
+                window_size=window_size+j;
+        }
+        else if(window_size<Window_threshold&&Window_threshold<=window_size+j)
+        {
+                window_size=Window_threshold;
+        }
+        else if(Window_threshold<=window_size)
+        {
+                window_size=window_size+((float)j)/window_size;
+                //cout<<"ff"<<Window_threshold<<endl;
+        }
+        else;
+        /*if(pkt->ECN1==1)
+        {
+                if(ACKcount_flag)
+                        ECNcount++;
                 window_size=window_size/2;               
         }
         else
@@ -815,7 +864,7 @@ Host::congestion_control(DTPPacket* pkt)
                 else;
                 
                 
-        }
+        }*/
         TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
         //delete pkt;
         return;

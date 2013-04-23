@@ -48,7 +48,7 @@ class Host : public FIFONode {
 	void copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from);
 	
 	
-	
+	int     dup_ack_count;
 	int     sync_bit;
 	int     term_bit;
 	int     retrans_bit;
@@ -64,7 +64,10 @@ class Host : public FIFONode {
 	Window1 sent_window;	
         Window1 recv_window;
         id_time send_time;
-
+        int     ECNcount;
+        int     ACKcount;
+        bool    ACKcount_flag;
+        float   alpha1;
  private:
         Time    last_transmit;
         Address	destination;		// Target address

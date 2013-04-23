@@ -64,7 +64,11 @@ class Host : public FIFONode {
 	Window1 sent_window;	
         Window1 recv_window;
         id_time send_time;
-
+        int     ECNcount;
+        int     ACKcount;
+        int     ACKcounter;
+        bool    ACKcount_flag;
+        float   alpha1;
  private:
         Time    last_transmit;
         Address	destination;		// Target address
