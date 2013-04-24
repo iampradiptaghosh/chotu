@@ -294,7 +294,7 @@ Host::receive(Packet* pkt)
 	
 	
    // if(pkt)
-    delete pkt;
+   // delete pkt;
 } 
 
 
@@ -347,8 +347,11 @@ Host::handle_timer(void* cookie)
 	                                pkt->print();//_header();
 	                }
 	                
-	                Window_threshold=window_size/2;
-	                window_size=1;
+	                
+                        Window_threshold=window_size/2;
+	                if(Window_threshold<1)
+                                Window_threshold=1;
+                        window_size=1;
 	                TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
 	                }
 	                //cout<<"kk";
@@ -655,10 +658,12 @@ void Host:: sent_window_sync(DTPPacket* pkt)
         {
                 dup_ack_count+=1;
                 //cout<<"DUP:"<<dup_ack_count<<endl;
-                if((dup_ack_count%2)==0)
+                if((dup_ack_count%3)==0)
                 {
                         //cout<<"DUP:"<<dup_ack_count<<endl;
                         window_size=window_size/2;
+                        if(window_size<1)
+                                window_size=1;
                         Window_threshold=window_size;
                         if(retrans_bit==2)
 		        {	
@@ -793,7 +798,7 @@ void
 Host::congestion_control(DTPPacket* pkt)
 {
         //int i=window_size;
-        TRACE(TRL3,"Previous Window Size at DTP-Host: %d is %f\n",address(),window_size);
+        TRACE(TRL3,"Previous Window Size at DTP-Host: %d is %f,  thres= %f\n",address(),window_size,Window_threshold);
         if(ACKcount_flag)
         {
                 if(ACKcounter>0)
@@ -812,7 +817,7 @@ Host::congestion_control(DTPPacket* pkt)
         {
                 if(ACKcount)
                 alpha1=alpha1*(1-G)+G*((float)ECNcount)/((float)ACKcount);
-                cout<<"alpha1"<<alpha1<<endl;
+                //cout<<"alpha1"<<alpha1<<endl;
                 ACKcount=floor(window_size);
                 ACKcounter=ACKcount;
                 ECNcount=0;
@@ -865,7 +870,10 @@ Host::congestion_control(DTPPacket* pkt)
                 
                 
         }*/
-        TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
+        if(window_size<1)
+                window_size=1;
+        
+        TRACE(TRL3,"Current Window Size at DTP-Host: %d is %f ,thre %f\n",address(),window_size,Window_threshold);
         //delete pkt;
         return;
 }
