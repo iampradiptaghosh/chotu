@@ -1,0 +1,40 @@
+# Dumb bell topology: 1 & 2 & 3 & 4 - 5 - 6 & 7 & 8 & 9
+
+Link(1, 5, 10, 1)
+Link(2, 5, 10, 1)
+Link(3, 5, 10, 1)
+Link(4, 5, 10, 1)
+Link(6, 5, 10, 1)
+Link(7, 5, 10, 1)
+Link(8, 5, 10, 1)
+Link(9, 5, 10, 1)
+
+# Router is node 5
+Router(5, 100)
+
+# Hosts 1, 2, 3 and 4 are Senders, hosts 6, 7, 8 and 9 are Receivers
+Host(1)
+Host(2)
+Host(3)
+Host(4)
+Host(6)
+Host(7)
+Host(8)
+Host(9)
+
+# Flow goes from node 1 to node 6 starting at 5 s and sending file "test1.txt"
+FDTPFlow(1, 6, 5, "test1.txt")
+# Flow goes from node 2 to node 7 starting at 5 s and sending file "test2.txt"
+FDTPFlow(2, 7, 5, "test2.txt")
+# Flow goes from node 3 to node 8 starting at 5 s and sending file "test3.txt"
+FDTPFlow(3, 8, 5, "test3.txt")
+# Flow goes from node 4 to node 9 starting at 5 s and sending file "test4.txt"
+FDTPFlow(4, 9, 5, "test4.txt")
+# Flow goes from node 6 to node 4 starting at 300005 s and sending file "test1.txt"
+FDTPFlow(6, 4, 300005, "test1.txt")
+# Flow goes from node 7 to node 3 starting at 300005 s and sending file "test2.txt"
+FDTPFlow(7, 3, 300005, "test2.txt")
+# Flow goes from node 8 to node 2 starting at 300005 s and sending file "test3.txt"
+FDTPFlow(8, 2, 300005, "test3.txt")
+# Flow goes from node 9 to node 1 starting at 300005 s and sending file "test4.txt"
+FDTPFlow(9, 1, 300005, "test4.txt")

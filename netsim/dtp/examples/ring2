@@ -20,10 +20,10 @@ Link(16, 4, 10, 1)
 
 
 # Routers are nodes 1,2, 3, 4
-Router(1, 100)
-Router(2, 100)
-Router(3, 100)
-Router(4, 100)
+Router(1, 2)
+Router(2, 2)
+Router(3, 2)
+Router(4, 2)
 
 
 # Hosts 
