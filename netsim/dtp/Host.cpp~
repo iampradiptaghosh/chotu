@@ -343,28 +343,26 @@ Host::handle_timer(void* cookie)
 			//last_transmit=scheduler->time();
 			if(retrans==scheduler->time())
 			{
-			back_off_counter=back_off_counter*2;
-			retrans=scheduler->time() +back_off_counter*RTO; ////Implement Exponential Backoff////
-			set_timer(retrans, NULL);
-			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
-			retrans_bit=2;
-			//cout<<"kk";
-			copy_pkt(pkt_1,retransmit_pkt);
-			pkt_1->ack_id =recv_so_far;
-			pkt_1->ECN=0;
-			pkt_1->ECN1=ECN;
-			if (send(pkt_1)) 
-			{
+			        back_off_counter=back_off_counter*2;
+        			retrans=scheduler->time() +back_off_counter*RTO; ////Implement Exponential Backoff////
+        			set_timer(retrans, NULL);
+        			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
+        			retrans_bit=2;
+        			//cout<<"kk";
+        			copy_pkt(pkt_1,retransmit_pkt);
+        			pkt_1->ack_id =recv_so_far;
+        			pkt_1->ECN=0;
+        			pkt_1->ECN1=ECN;
+        			if (send(pkt_1)) 
+        			{
                                         TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
 	                                pkt_1->print();//_header();
-	                }
-	                
-	                
-                        Window_threshold=window_size/2;
-	                if(Window_threshold<1)
-                                Window_threshold=1;
-                        window_size=1;
-	                TRACE(TRL4,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
+	                        }
+	                        Window_threshold=window_size/2;
+        	                if(Window_threshold<1)
+                                        Window_threshold=1;
+                                window_size=1;
+        	                TRACE(TRL4,"Current Window Size at DTP-Host: %d is %f\n",address(),window_size);
 	                }
 	                //cout<<"kk";
 	                goto timer_end;

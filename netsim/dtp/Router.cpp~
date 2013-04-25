@@ -103,7 +103,7 @@ Router::send(Packet* packet)
 
     TRACE(TRL2, "Queue full at %d, dropped packet (src %d, dst %d, id %d)\n",
           address(), packet->source, packet->destination, packet->id);
-   // delete packet;
+    delete packet;
     return 0;
 }
 
@@ -158,7 +158,7 @@ Router::receive(Packet* pkt)
 
     // If the packet is for us, drop it
     if (pkt->destination == address()) {
-        //delete pkt;
+        delete pkt;
         return;
     }
 
@@ -186,7 +186,7 @@ Router::receive(Packet* pkt)
     TRACE(TRL2, "Queue full at %d, dropped packet (src %d, dst %d, id %d)\n",
           address(), pkt->source, pkt->destination,
           pkt->id);
-    //delete pkt;
+    delete pkt;
     return;
 }
 

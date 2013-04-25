@@ -344,7 +344,7 @@ Host::handle_timer(void* cookie)
 			if(retrans==scheduler->time())
 			{
 			        back_off_counter=back_off_counter*2;
-        			retrans=scheduler->time() +back_off_counter*RTO; ////Implement Exponential Backoff////
+        			retrans=scheduler->time() +back_off_counter*RTO; ////Exponential Backoff////
         			set_timer(retrans, NULL);
         			TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
         			retrans_bit=2;
