@@ -1,18 +1,17 @@
-# Chain topology: 1 - 2 - 3
-Link(1, 2, 10, 1)
-Link(2, 3, 10, 1)
-Link(4, 2, 10, 1)
-Link(2, 5, 10, 1)
-Link(6, 2, 10, 1)
-Link(2, 7, 10, 1)
-# Node 1 is Sender, node 3 is the receiver, node 2 is a drop tail router
-Host(3)
+# Chain topology: 1 - 2 - 3 - 4 - 5
+Link(1, 2, 10000, 1)
+Link(2, 3, 10000, 1)
+Link(3, 4, 10000, 1)
+Link(4, 5, 10000, 1)
+
+# Routers are nodes 2, 3 and 4
+Router(2, 2)
+Router(3, 2)
+Router(4, 2)
+
+# Host 1 is Sender, host 5 is the receiver
 Host(1)
-Host(4)
 Host(5)
-Host(6)
-Host(7)
-FDTPFlow(1, 3, 50, 1)
-FDTPFlow(4, 5, 50, 1)
-FDTPFlow(6, 7, 50, 5)
-Router(2,1)
+
+# Flow goes from node 1 to node 5 starting at 10 s and sending file "test.txt"
+FDTPFlow(1, 5, 10, "test1.pdf")

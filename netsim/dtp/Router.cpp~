@@ -32,7 +32,7 @@ PacketQueue1::enq(Packet* p)
 {
     
     if (packet_queue.size() < max_size) {
-        if (packet_queue.size() >= max_size/2)
+        if (packet_queue.size() >= max_size/3)
         {
                 //cout<<"Set ECN"<<endl;
                 ((DTPPacket*)p)->ECN=1;
@@ -186,6 +186,8 @@ Router::receive(Packet* pkt)
     TRACE(TRL2, "Queue full at %d, dropped packet (src %d, dst %d, id %d)\n",
           address(), pkt->source, pkt->destination,
           pkt->id);
+    //if (pkt)
+    ((DTPPacket*)pkt)->print();
     delete pkt;
     return;
 }

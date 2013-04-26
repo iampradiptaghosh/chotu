@@ -1,0 +1,27 @@
+#include <iostream>
+#include <fstream>
+#include <string.h>
+#include <string>
+#include <math.h>
+#include <stdio.h>
+
+
+using namespace std;
+
+int main(void)
+{
+        ifstream in_file;
+        in_file.open ("test1.pdf", ios::in); 
+	char c;
+	
+        ofstream file1("dest_test1.pdf", ios::out);
+	
+	while(!in_file.eof())
+	{
+	       c= in_file.get();
+	       file1.put(c);
+	}
+	in_file.close();
+	file1.close();
+	return 0;
+}

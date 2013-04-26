@@ -1,0 +1,17 @@
+# Chain topology: 1 - 2 - 3 - 4 - 5
+Link(1, 2, 10000, 1)
+Link(2, 3, 10000, 1)
+Link(3, 4, 10000, 1)
+Link(4, 5, 10000, 1)
+
+# Routers are nodes 2, 3 and 4
+Router(2, 2)
+Router(3, 2)
+Router(4, 2)
+
+# Host 1 is Sender, host 5 is the receiver
+Host(1)
+Host(5)
+
+# Flow goes from node 1 to node 5 starting at 10 s and sending file "test.txt"
+FDTPFlow(1, 5, 10, "test1.pdf")

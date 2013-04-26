@@ -10,10 +10,10 @@ Link(7, 9, 10, 1)
 Link(7, 10, 10, 1)
 
 # Routers are nodes 3, 4 and 5
-Router(4, 100)
-Router(5, 100)
-Router(6, 100)
-Router(7, 100)
+Router(4, 1)
+Router(5, 1)
+Router(6, 1)
+Router(7, 1)
 
 # Hosts 1, 2 and 3 are Senders, hosts 8, 9 and 10 are Receivers
 Host(1)

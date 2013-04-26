@@ -11,10 +11,10 @@ Link(7, 3, 10, 1)
 Link(8, 4, 10, 1)
 
 # Routers are nodes 2, 3, 4 and 5
-Router(2, 2)
-Router(3, 2)
-Router(4, 2)
-Router(5, 2)
+Router(2, 1)
+Router(3, 1)
+Router(4, 1)
+Router(5, 1)
 
 # Hosts 1, 7, 8 and 6
 Host(1)
@@ -26,7 +26,6 @@ Host(6)
 FDTPFlow(1, 6, 5, "test1.txt")
 # Flow goes from node 7 to node 8 starting at 10 s and sending file "test2.txt"
 FDTPFlow(8, 7, 5, "test2.txt")
-
 # Flow goes from node 3 to node 8 starting at 5 s and sending file "test3.txt"
 #FDTPFlow(3, 8, 5, "test3.txt")
 # Flow goes from node 4 to node 9 starting at 5 s and sending file "test4.txt"

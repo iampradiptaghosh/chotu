@@ -186,6 +186,8 @@ Router::receive(Packet* pkt)
     TRACE(TRL2, "Queue full at %d, dropped packet (src %d, dst %d, id %d)\n",
           address(), pkt->source, pkt->destination,
           pkt->id);
+    //if (pkt)
+    //((DTPPacket*)pkt)->print();
     delete pkt;
     return;
 }

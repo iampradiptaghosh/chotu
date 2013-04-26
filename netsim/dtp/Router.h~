@@ -1,8 +1,62 @@
 class FIFONode;
+class DTPPacket;
 
+class PacketQueue1 {
+    friend class Router;
+    
+ public:
+    PacketQueue1(int sz, Address s, Address d);
+    ~PacketQueue1();
+
+    // Return 0 if no space in queue, else 1
+    int enq(DTPPacket* p);			// Pointer to packet to send
+
+    // Return first packet, else NULL
+    DTPPacket* deq();
+
+ private:
+    queue<DTPPacket*>	packet_queue;	// Queue of packets
+    int			max_size;	// Max queue size
+    int 		pending_send;	// Set if packet is in transit
+    Address		node;		// Node at which queue resides
+    Address		neighbor;	// Neighbor for queue
+};
+typedef map<Address, PacketQueue1*, ltAddress> QueueMap1;
+typedef map<Address, PacketQueue1*, ltAddress>::iterator QueueMapIterator1;
+typedef pair<Address, PacketQueue1*> QueueMapPair1;
+
+//
+// The FIFONode implements a FCFS router. Most routers in the Internet
+// employ this queuing discipline. For each neighbor, it maintains a
+// PacketQueue.
+//
+// The CbrSender class is derived from FIFONode. 
+//
 class Router : public FIFONode 
 {
  public:
     Router(Address a, int b);
     ~Router();
+    // Send a packet: return 0 on failure, 1 on success
+    int send(DTPPacket* packet);		// packet to send
+    
+    // Call when the packet has been sent
+    void send_done(Address nhop);	// Neighbor to whom sent
+    
+    // Receive a packet
+    // Needs to be defined by the inheriting class
+    void receive(DTPPacket* packet);	// received packet
+
+    // Handle a timer
+    // Needs to be defined by the inheriting class
+    void handle_timer(void* cookie);
+
+ private:
+    // Send a packet to a nexthop
+    void send_it(Address nhop);
+    
+    int		max_queue_size;			// Number of packets in queue
+    QueueMap1	queue_map;			// Map of queues per nexthop
+    int		pending_send;			// Boolean
 };
+

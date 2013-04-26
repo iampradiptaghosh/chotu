@@ -10,7 +10,7 @@
 class DTPPacket : public Packet {
  public:
 	// DTPPacket();
-	// ~DTPPacket();
+        virtual ~DTPPacket(void) {};
 	short sync_bit;
         bool FIN;
         bool ECN;

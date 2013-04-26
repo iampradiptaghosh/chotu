@@ -67,8 +67,10 @@ class Host : public FIFONode {
         int     ECNcount;
         int     ACKcount;
         int     ACKcounter;
+        int     back_off_counter;
         bool    ACKcount_flag;
         float   alpha1;
+        FILE*   f;
  private:
         Time    last_transmit;
         Address	destination;		// Target address

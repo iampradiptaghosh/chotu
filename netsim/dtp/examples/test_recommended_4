@@ -32,12 +32,12 @@ Link(6, 17, 10, 1)
 Link(6, 18, 10, 1)
 
 # Routers are nodes 1, 2, 3, 4, 5 and 6
-Router(1, 100)
-Router(2, 100)
-Router(3, 100)
-Router(4, 100)
-Router(5, 100)
-Router(6, 100)
+Router(1, 1)
+Router(2, 1)
+Router(3, 1)
+Router(4, 1)
+Router(5, 1)
+Router(6, 1)
 
 # Hosts 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 Host(7)
@@ -55,9 +55,9 @@ Host(18)
 
 # Flows
 FDTPFlow(7, 18, 5, "test1.txt")
-FDTPFlow(8, 9, 5, "test1.txt")
-FDTPFlow(10, 17, 5, "test1.txt")
-FDTPFlow(11, 13, 5, "test1.txt")
-FDTPFlow(12, 14, 5, "test1.txt")
-FDTPFlow(15, 16, 5, "test1.txt")
+FDTPFlow(8, 9, 5, "test2.txt")
+FDTPFlow(10, 17, 5, "test3.txt")
+FDTPFlow(11, 13, 5, "test4.txt")
+FDTPFlow(12, 14, 5, "test5.txt")
+FDTPFlow(15, 16, 5, "test6.txt")
 
