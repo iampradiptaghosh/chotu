@@ -187,7 +187,7 @@ Router::receive(Packet* pkt)
           address(), pkt->source, pkt->destination,
           pkt->id);
     //if (pkt)
-    ((DTPPacket*)pkt)->print();
+    //((DTPPacket*)pkt)->print();
     delete pkt;
     return;
 }

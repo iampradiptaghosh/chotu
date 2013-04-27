@@ -437,14 +437,14 @@ Host::sync()
         dest_map.erase(head);
 	TRACE(TRL4,"The new file to be transfered from DTP-Host %d is: %s\n",address(),newpair->name);
 	//cout<<newpair->name<<endl;
-	in_file.open (newpair->name, ios::in| ios::binary); 
+	in_file.open (newpair->name, ios::in); 
 	Node* nd = (scheduler->get_node)(destination);
 	char name[99999];
 	
 	strcpy(name,"dest_");
         strcat(name,newpair->name);
         strcpy((((Host*)nd)->out_file),name);
-	ofstream file1(name, ios::out| ios::binary);
+	ofstream file1(name, ios::out);
 	file1.close();
 	reset();
 	((Host*)nd)->reset();
@@ -475,7 +475,7 @@ Host::send_file()
         int i=0;
 	if (in_file.is_open())
         {       
-        while ( in_file.good()&&!in_file.eof())
+        while (!in_file.eof())
         {       
                 if(packets_in_window>=window_size)
                 {    
@@ -489,20 +489,36 @@ Host::send_file()
 	        while (!in_file.eof())
                 {
 	                line[i]=in_file.get();
+	                //fprintf(stderr,"%02x ", (unsigned char)line[i]);
 	                i++;
 	                if(i==PAYLOAD_SIZE-1)
 	                        break;
 	        }
 	        if(in_file.eof())
-	                i-=1;
-	        line[i]='\0';     
+	               i-=1;
+	        line[i]='\0';    
+	        cout<<i<<endl;
+	        //int j=0;
+	        //j=0;
+	        //ofstream file2("testv", ios::out|ios::app);
+                //while(line[j]!='\0')
+	        //{
+	        //         file2.put(line[j]);
+	        //         j++;
+	        //}
+	        //file2<<line;	        
+	        //file2.close(); 
                 DTPPacket* pkt_s= new DTPPacket;
                 DTPPacket* pkt11= new DTPPacket;
-                char* d;
+                unsigned char* d;
 
                 sent_so_far+=1;
                 d = &(pkt_s->data[0]);
-                strcpy(d,line);
+                for (int ll = 0; ll <= i; ll++) 
+                {
+                        *(d+ll) = (unsigned char) line[ll];	
+                }
+                //strcpy(d,line);
 	        //cout<<d<<endl;
 	        //pkt_s->FIN=term_bit;
                 pkt_s->FIN=0;
@@ -599,11 +615,17 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	        //cout<<"aa:"<<pkt_recv->data<<endl;
 	        TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
 	        ((DTPPacket*)pkt)->print();
-	        
-	        if (file1.is_open()&&file1.good())
+	        //int i=0;
+	        if (file1.is_open())
 	        {
+	               int i=0;
+	               int leng=(pkt_recv->length)-HEADER_SIZE;
 	               // cout<<"hh"<<endl;
-	                file1<<pkt_recv->data;
+	               for(i=0;i<leng;i++)
+	               {
+	                 file1.put(pkt_recv->data[i]);
+	               //  i++;
+	               }
 	        }
                 
 	        if(!recv_window.empty())
@@ -626,7 +648,17 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	                        recv_window.erase(head1);
 	                        break;
 	                }
-	                file1<<pkt_iter_recv->data;
+	                int i=0;
+	                int leng=(pkt_iter_recv->length)-HEADER_SIZE;
+	               // cout<<"hh"<<endl;
+	                for(i=0;i<leng;i++)
+	                {
+	                       file1.put(pkt_iter_recv->data[i]);
+        	               //  i++;
+                        }
+	               
+	                
+	              // file1<<pkt_iter_recv->data;
 	               // cout<<"bb"<<pkt_iter_recv->data<<endl;
 	                recv_window.erase(head1);
 	                head1 =recv_window.begin();
@@ -942,7 +974,18 @@ void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
         pkt_to->id = pkt_from->id;
         pkt_to->ack_id =pkt_to->ack_id;
         pkt_to->sync_bit=pkt_from->sync_bit; 
-        strcpy(pkt_to->data,pkt_from->data);
+        int i=0;
+        int leng=(pkt_from->length)-HEADER_SIZE;
+	               	                
+	unsigned char *a1,*a2;
+        a1=&(pkt_from->data[0]);
+        a2=&(pkt_to->data[0]);
+        for(i=0;i<=leng;i++)
+        {
+                *(a2+i)=*(a1+i);
+                //i++;
+        }
+       // strcpy(pkt_to->data,pkt_from->data);
         pkt_to->ECN=pkt_from->ECN;
         pkt_to->ECN1=pkt_from->ECN1;
 }

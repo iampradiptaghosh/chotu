@@ -56,7 +56,7 @@ class Host : public FIFONode {
 	float   window_size;
 	DTPPacket* retransmit_pkt;
 	SendMap dest_map;
-	ifstream in_file;
+	fstream in_file;
 	char    out_file[1000];
 	bool    sender;
 	bool    ECN;
@@ -70,11 +70,9 @@ class Host : public FIFONode {
         int     back_off_counter;
         bool    ACKcount_flag;
         float   alpha1;
-        FILE*   f;
  private:
         Time    last_transmit;
         Address	destination;		// Target address
-        Time	start;			// Start sending at
         Time	retrans;	// Inter-packet time
         int	sent_so_far;
         int	recv_so_far;
