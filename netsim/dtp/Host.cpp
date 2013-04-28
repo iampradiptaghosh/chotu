@@ -563,78 +563,78 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	else
 	{
 	Window1_iter head = recv_window.find(pkt_recv->id);
-      	ofstream file1(out_file, ios::out | ios::app| ios::binary);
+      	ofstream file1(out_file, ios::out | ios::app);
 	if(head!=recv_window.end())
 	{
 	        //handle_timer((void*)1);
 	}
-	else if((pkt_recv->id)==recv_so_far&&write)
+	else 
 	{
+	        if((pkt_recv->id)==recv_so_far&&write)
+        	{
 	       
-	        //cout<<"aa:"<<pkt_recv->data<<endl;
-	        TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
-	        ((DTPPacket*)pkt)->print();
-	        //int i=0;
-	        if (file1.is_open())
-	        {
-	               int i=0;
-	               int leng=(pkt_recv->length)-HEADER_SIZE;
-	               // cout<<"hh"<<endl;
-	               for(i=0;i<leng;i++)
-	               {
-	                 file1.put(pkt_recv->data[i]);
-	               //  i++;
-	               }
-	        }
+	               //cout<<"aa:"<<pkt_recv->data<<endl;
+        	        TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
+        	        ((DTPPacket*)pkt)->print();
+        	        //int i=0;
+        	        if (file1.is_open())
+        	        {
+        	               int i=0;
+        	               int leng=(pkt_recv->length)-HEADER_SIZE;
+        	               // cout<<"hh"<<endl;
+        	               for(i=0;i<leng;i++)
+        	               {               
+        	                        file1.put(pkt_recv->data[i]);
+        	                        //  i++;
+        	               }
+        	        }
                 
-	        if(!recv_window.empty())
-	        {
-	        Window1_iter head1 =recv_window.begin();
-	        //display(recv_window);
-	        while(head1!=recv_window.end())
-	        {
-	                DTPPacket *pkt_iter_recv;
-	                pkt_iter_recv=(*head1).second;
-	                if(pkt_iter_recv->id!=recv_so_far+1)
-	                {
-	                        break;
-	                }
-	                recv_so_far+=1;
-	                TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
-	                ((DTPPacket*)pkt_iter_recv)->print();
-	                if(pkt_iter_recv->FIN==1)
-	                {
-	                        recv_window.erase(head1);
-	                        break;
-	                }
-	                int i=0;
-	                int leng=(pkt_iter_recv->length)-HEADER_SIZE;
-	               // cout<<"hh"<<endl;
-	                for(i=0;i<leng;i++)
-	                {
-	                       file1.put(pkt_iter_recv->data[i]);
-        	               //  i++;
-                        }
-	               
-	                
-	              // file1<<pkt_iter_recv->data;
-	               // cout<<"bb"<<pkt_iter_recv->data<<endl;
-	                recv_window.erase(head1);
-	                head1 =recv_window.begin();
-	                delete pkt_iter_recv;
-	        }
-	        }
-	                
-         }
-         else if((pkt_recv->id)>recv_so_far)
-         {      
-                DTPPacket* pkt_store=new DTPPacket;
-                copy_pkt(pkt_store,pkt_recv);
-                TRACE(TRL3,"Received an Out-of-Order packet at DTP-Host: %d\n",address());
-                Window1Pair entry(pkt_store->id,pkt_store);
-	        recv_window.insert(entry);
-	        //set_timer(retrans, NULL);
-	 }   
+        	        if(!recv_window.empty())
+        	        {
+        	                Window1_iter head1 =recv_window.begin();
+                	        //display(recv_window);
+                	        while(head1!=recv_window.end())
+                	        {
+                	                DTPPacket *pkt_iter_recv;
+                	                pkt_iter_recv=(*head1).second;
+                	                if(pkt_iter_recv->id!=recv_so_far+1)
+                	                {
+                	                        break;
+                	                }
+                	                recv_so_far+=1;
+                	                TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
+                	                ((DTPPacket*)pkt_iter_recv)->print();
+                	                if(pkt_iter_recv->FIN==1)
+                	                {
+                	                        recv_window.erase(head1);
+                	                        break;
+                	                }
+                	                int i=0;
+                	                int leng=(pkt_iter_recv->length)-HEADER_SIZE;
+                	               // cout<<"hh"<<endl;
+                	                for(i=0;i<leng;i++)
+                	                {
+                	                       file1.put(pkt_iter_recv->data[i]);
+                        	               //  i++;
+                                        }
+        	                        // file1<<pkt_iter_recv->data;
+        	                        // cout<<"bb"<<pkt_iter_recv->data<<endl;
+        	                        recv_window.erase(head1);
+                	                head1 =recv_window.begin();
+                	                delete pkt_iter_recv;
+                	        }
+        	        }
+                }
+                else if((pkt_recv->id)>recv_so_far)
+                {      
+                        DTPPacket* pkt_store=new DTPPacket;
+                        copy_pkt(pkt_store,pkt_recv);
+                        TRACE(TRL3,"Received an Out-of-Order packet at DTP-Host: %d\n",address());
+                        Window1Pair entry(pkt_store->id,pkt_store);
+        	        recv_window.insert(entry);
+        	        //set_timer(retrans, NULL);
+        	}   
+        }
 	 
 	
 	// display(recv_window);
@@ -716,9 +716,7 @@ void Host:: sent_window_sync(DTPPacket* pkt)
                 }
         }
         else
-        {//cout<<"jddjdkdkd"<<endl;
-                //DTPPacket*	pkt10 = new DTPPacket;
-	       // copy_pkt(pkt10,pkt);
+        {
 	        dup_ack_count=0;
 	        congestion_control(pkt);
 	        
@@ -727,95 +725,103 @@ void Host:: sent_window_sync(DTPPacket* pkt)
 	                cancel_timer(retrans, NULL);
                         retrans=0;
                         retrans_bit=0;
-                 }
+                }
 	
-	//cout<<"cccc"<<endl<<endl;
-	//pkt->print_header();
-        last_ack=pkt->ack_id;
-        DTPPacket *pkt_send;
-        Window1_iter head = sent_window.find(pkt->ack_id);
-	
-	if(head!=sent_window.end()&&!sent_window.empty())
-	{
-	        //cout<<"jddjdkdkd"<<endl;
-	        Window1_iter head1 =sent_window.begin();
-	        if(head1==head)
-	        {
-	                pkt_send=(*head1).second;
-	                //cout<<"bbbb"<<endl<<endl;
-	                //pkt_send->print_header();
-	               // last_ack++;
-	                sent_window.erase(head1);
-	                packets_in_window--;
-	        }
-	        else
-	        {
-	        while(head1!=head)
-	        {
-	                head1 =sent_window.begin();
-	                pkt_send=(*head1).second;
-	                //cout<<"bbbb"<<endl<<endl;
-	                //pkt_send->print_header();
-	                // last_ack++;;
-	                sent_window.erase(head1);
-	                packets_in_window--;
-	        }
-	        }
-	        //update window
-	        //retransmit
-	}
-	
-	//display();
-	
-	RTTVAR=(1 - beta)*RTTVAR +beta*abs(RTT - (scheduler->time()-last_transmit));
-	
-	RTT=(1 - alpha) * RTT + alpha *(scheduler->time()-last_transmit);
-	
-	RTO = (RTT + K*RTTVAR);
-	TRACE(TRL4,"Current RTT: %d\n Current RTO: %d",scheduler->time()-last_transmit,RTO);
-        id_time_iter id_timer = send_time.find(pkt->ack_id+1);
-
-	                //cout<<"kk";	
-	if(id_timer!=send_time.end()&&!send_time.empty())
-	{
-	        last_transmit=(*id_timer).second;
-	}
-	else
-	{
-	        last_transmit=scheduler->time();	
-	}
-	//cout<<"last_transmit:"<<last_transmit<<endl;           
-	        
-	Window1_iter head1 =sent_window.begin();
-	if(head1!=sent_window.end())
-	        retransmit_pkt=(*head1).second;
-	else
-                retransmit_pkt=NULL;
-                
-        if(retrans_bit==0&&retransmit_pkt!=NULL)
-        {
-              	
-	        back_off_counter=1;
-	        retrans_bit=2;
-               /* if((last_transmit+RTO)>scheduler->time())
-                        retrans=last_transmit+RTO;
-                else*/
-                
-                retrans=scheduler->time() +RTO;
-                set_timer(retrans, NULL);
-                if(retransmit_pkt->FIN!=1&&((last_transmit+RTO)<scheduler->time()))
-              	{
-              	        DTPPacket*	pkt9 = new DTPPacket;
-        	        copy_pkt(pkt9,retransmit_pkt);
-        	        pkt9->ack_id =recv_so_far;
-        	        if (send(pkt9)) 
+	        //cout<<"cccc"<<endl<<endl;
+        	//pkt->print_header();
+                last_ack=pkt->ack_id;
+                DTPPacket *pkt_send;
+                Window1_iter head = sent_window.find(pkt->ack_id);
+        
+        	if(head!=sent_window.end()&&!sent_window.empty())
+        	{
+        	        //cout<<"jddjdkdkd"<<endl;
+        	        Window1_iter head1 =sent_window.begin();
+        	        if(head1==head)
         	        {
-                                TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
-        	                pkt9->print();//_header();
+        	                pkt_send=(*head1).second;
+        	                //cout<<"bbbb"<<endl<<endl;
+        	                //pkt_send->print_header();
+        	               // last_ack++;
+        	                sent_window.erase(head1);
+        	                packets_in_window--;
         	        }
-	        }
-                TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
-        }       
+	                else
+        	        {
+                	        while(head1!=head)
+                	        {
+                	                head1 =sent_window.begin();
+                	                pkt_send=(*head1).second;
+                	                //cout<<"bbbb"<<endl<<endl;
+                	                //pkt_send->print_header();
+                	                // last_ack++;;
+                	                sent_window.erase(head1);
+                	                packets_in_window--;
+                	        }
+        	        }
+        	        //update window
+        	        //retransmit
+        	}
+        		
+        	//display();	
+        	RTTVAR=(1 - beta)*RTTVAR +beta*abs(RTT - (scheduler->time()-last_transmit));
+	
+        	RTT=(1 - alpha) * RTT + alpha *(scheduler->time()-last_transmit);
+        	
+        	RTO = (RTT + K*RTTVAR);
+        	TRACE(TRL4,"Current RTT: %d\n Current RTO: %d",scheduler->time()-last_transmit,RTO);
+
+                id_time_iter id_timer = send_time.find(pkt->ack_id+1);
+                //cout<<"kk";	
+        
+        	if(id_timer!=send_time.end()&&!send_time.empty())
+        	{
+        	        last_transmit=(*id_timer).second;
+        	}
+        	else
+        	{
+        	        last_transmit=scheduler->time();	
+        	}
+	        //cout<<"last_transmit:"<<last_transmit<<endl;           
+        	        
+        	Window1_iter head1 =sent_window.begin();
+        	if(head1!=sent_window.end())
+        	        retransmit_pkt=(*head1).second;
+        	else
+                        retransmit_pkt=NULL;
+                
+                if(retrans_bit==0&&retransmit_pkt!=NULL)
+                {
+                        back_off_counter=1;
+        	        retrans_bit=2;
+                       /* if((last_transmit+RTO)>scheduler->time())
+                        retrans=last_transmit+RTO;
+                        else*/
+                        if((last_transmit+RTO)<scheduler->time())
+                        {
+                                retrans=scheduler->time() +RTO;
+                                set_timer(retrans, NULL);
+                                if(retransmit_pkt->FIN!=1)//((last_transmit+RTO)<scheduler->time()))
+                              	{
+                              	        DTPPacket*	pkt9 = new DTPPacket;
+                        	        copy_pkt(pkt9,retransmit_pkt);
+                        	        pkt9->ack_id =recv_so_far;
+                        	        if (send(pkt9)) 
+                        	        {
+                                                TRACE(TRL3,"Retransmit packet from DTP-Host: %d\n",address());
+                        	                pkt9->print();//_header();
+                        	        }
+                	        }
+                         }
+                         else
+                         {
+                                retrans=last_transmit+RTO;
+                                set_timer(retrans, NULL);
+                         }
+                                          
+                         TRACE(TRL4,"Next Retransmit at DTP-Host %d is set at Time: %d\n",address(),retrans);
+                                
+                }       
         }
         //cout<<"last_ack="<<last_ack<<endl;
         return;
@@ -824,7 +830,7 @@ void
 Host::congestion_control(DTPPacket* pkt)
 {
         //int i=window_size;
-        TRACE(TRL4,"Previous Window Size at DTP-Host: %d is %f,  thres= %f\n",address(),window_size,Window_threshold);
+        TRACE(TRL4,"Previous Window Size at DTP-Host: %d is %f,  Threshold= %f\n",address(),window_size,Window_threshold);
         if(ACKcount_flag)
         {
                 if(ACKcounter>0)
@@ -839,7 +845,8 @@ Host::congestion_control(DTPPacket* pkt)
                         ACKcount_flag=0;
                         
         }
-        else
+        
+        if(!ACKcount_flag)
         {
                 if(ACKcount)
                 alpha1=alpha1*(1-G)+G*((float)ECNcount)/((float)ACKcount);
@@ -899,30 +906,11 @@ Host::congestion_control(DTPPacket* pkt)
         if(window_size<1)
                 window_size=1;
         
-        TRACE(TRL4,"Current Window Size at DTP-Host: %d is %f ,thre %f\n",address(),window_size,Window_threshold);
+        TRACE(TRL4,"Current Window Size at DTP-Host: %d is %f ,Threshold= %f\n",address(),window_size,Window_threshold);
 
         return;
 }
 
-void 
-Host::display(Window1 w1)
-{
-        
-        
-        if(!w1.empty())
-	{
-	        //cout<<"jddjdkdkd"<<endl;
-	        Window1_iter head1 =w1.begin();
-	        DTPPacket* pkt1;
-	        while(head1!=w1.end())
-	        {
-	                pkt1=(*head1).second;
-	                //cout<<"dddd"<<endl<<endl;
-	                pkt1->print();//_header();
-	                head1=w1.upper_bound(pkt1->id);
-	        }
-	}
-}
 void Host::copy_pkt(DTPPacket* pkt_to,DTPPacket* pkt_from)
 {
         pkt_to->FIN=pkt_from->FIN;
