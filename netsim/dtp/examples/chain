@@ -14,4 +14,4 @@ Host(1)
 Host(5)
 
 # Flow goes from node 1 to node 5 starting at 10 s and sending file "test.txt"
-FDTPFlow(1, 5, 10, "test1.pdf")
+FDTPFlow(1, 5, 10, "Dataset/test1.pdf")

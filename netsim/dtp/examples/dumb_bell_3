@@ -35,13 +35,13 @@ Host(12)
 Host(13)
 
 # Flow goes from node 6 to node 13 starting at 5 s and sending file "test1.txt"
-FDTPFlow(6, 13, 5, "test1.pdf")
+FDTPFlow(6, 13, 5, "Dataset/test1.pdf")
 
 # Flow goes from node 7 to node 12 starting at 5 s and sending file "test2.txt"
-FDTPFlow(7, 12, 5, "test2.pdf")
+FDTPFlow(7, 12, 5, "Dataset/test2.pdf")
 
 # Flow goes from node 10 to node 9 starting at 3 s and sending file "test3.txt"
-FDTPFlow(10, 9, 3, "test3.pdf")
+FDTPFlow(10, 9, 3, "Dataset/test3.pdf")
 
 # Flow goes from node 11 to node 8 starting at 3 s and sending file "test4.txt"
-FDTPFlow(11, 8, 3, "test4.pdf")
+FDTPFlow(11, 8, 3, "Dataset/test4.pdf")

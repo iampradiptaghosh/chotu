@@ -24,10 +24,10 @@ Host(9)
 Host(10)
 
 # Flow goes from node 1 to node 10 starting at 5 s and sending file "test1.txt"
-FDTPFlow(1, 10, 5, "test1.txt")
+FDTPFlow(1, 10, 5, "Dataset/test1.txt")
 
 # Flow goes from node 2 to node 9 starting at 7 s and sending file "test2.txt"
-FDTPFlow(2, 9, 7, "test2.txt")
+FDTPFlow(2, 9, 7, "Dataset/test2.txt")
 
 # Flow goes from node 3 to node 8 starting at 3 s and sending file "test3.txt"
-FDTPFlow(3, 8, 3, "test3.txt")
+FDTPFlow(3, 8, 3, "Dataset/test3.txt")

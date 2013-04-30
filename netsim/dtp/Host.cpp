@@ -473,7 +473,7 @@ Host::send_file()
         	                if(i==PAYLOAD_SIZE-1)
         	                        break;
         	        }
-        	        if(in_file.eof())
+        	        if(line[i-1]==EOF)
         	               i-=1;
         	        line[i]='\0';    
         	        //cout<<i<<endl;

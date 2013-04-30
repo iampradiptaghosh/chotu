@@ -16,12 +16,12 @@ DTPPacket::print()
         print_header();
         if(length>HEADER_SIZE)
         {
-                cout<<length-HEADER_SIZE<<endl;
+                //cout<<length-HEADER_SIZE<<endl;
                 Packet::print_payload((char *) &data[0], length-HEADER_SIZE, false);
         }
 }
 void
 DTPPacket::print_header()
 {
-	TRACE(TRL3, "source: %d, destination: %d, length: %d, sn: %d (%d)\nack_n: %d, Sync_bit: %d, FIN Flag: %d, ACK Flag:%d, ECN (Set by Router)= %d, ECN (Set by Host)= %d\n",(int) source, (int) destination, length, id, scheduler->time(),ack_id,sync_bit,FIN,ACK,ECN,ECN1 );
+	TRACE(TRL3, "source: %d, destination: %d, length: %d, sn: %d (%d)\n",(int) source, (int) destination, length, id, scheduler->time());
 }
