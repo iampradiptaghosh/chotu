@@ -230,11 +230,13 @@ Host::receive(Packet* pkt)
 		{
 		     
 		        if(!sender)
+		        
 		        {
 		                if(1)//term_bit!=2)
-		                {       
+		                {       //cout<<"HH"<<endl;
                 		        if(((DTPPacket*)pkt)->id==recv_so_far)
                 		        {
+                		                //cout<<"GG"<<endl;
                 		                TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());      
                                 	        ((DTPPacket*)pkt)->print();
                 	                        DTPPacket*	pkt1 = new DTPPacket;
@@ -263,7 +265,7 @@ Host::receive(Packet* pkt)
                 		        {
                 		                term_bit=1;
                 		                ter_seq=((DTPPacket*)pkt)->id;
-                		                recv_window_sync((DTPPacket*)pkt);
+                		                //recv_window_sync((DTPPacket*)pkt);
                 		        }
         		        }
         	      }

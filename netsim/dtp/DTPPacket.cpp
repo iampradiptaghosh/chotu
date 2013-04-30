@@ -24,4 +24,5 @@ void
 DTPPacket::print_header()
 {
 	TRACE(TRL3, "source: %d, destination: %d, length: %d, sn: %d (%d)\n",(int) source, (int) destination, length, id, scheduler->time());
+	//TRACE(TRL3, "source: %d, destination: %d, length: %d, sn: %d (%d)\nack_n: %d, Sync_bit: %d, FIN Flag: %d, ACK Flag:%d, ECN (Set by Router)= %d, ECN (Set by Host)= %d\n",(int) source, (int) destination, length, id, scheduler->time(),ack_id,sync_bit,FIN,ACK,ECN,ECN1 );
 }
