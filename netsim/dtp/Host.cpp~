@@ -233,10 +233,10 @@ Host::receive(Packet* pkt)
 		        
 		        {
 		                if(1)//term_bit!=2)
-		                {       cout<<"HH"<<endl;
+		                {       //cout<<"HH"<<endl;
                 		        if(((DTPPacket*)pkt)->id==recv_so_far)
                 		        {
-                		                cout<<"GG"<<endl;
+                		                //cout<<"GG"<<endl;
                 		                TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());      
                                 	        ((DTPPacket*)pkt)->print();
                 	                        DTPPacket*	pkt1 = new DTPPacket;
@@ -475,7 +475,7 @@ Host::send_file()
         	                if(i==PAYLOAD_SIZE-1)
         	                        break;
         	        }
-        	        if(line[i-1]==EOF)
+        	        if(in_file.eof())
         	               i-=1;
         	        line[i]='\0';    
         	        //cout<<i<<endl;
