@@ -431,12 +431,13 @@ Host::sync()
 	
 	//For creating a blank dest file
 	Node* nd = (scheduler->get_node)(destination);
-	char name[99999];
+	/*char name[99999];
 	strcpy(name,"dest_");
         strcat(name,newpair->name);
+        strcat(name,".txt");
         strcpy((((Host*)nd)->out_file),name);
 	ofstream file1(name, ios::out);
-	file1.close();
+	file1.close();*/
 	//For creating a blank dest file
 	
 	
@@ -565,7 +566,9 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	else
 	{
 	Window1_iter head = recv_window.find(pkt_recv->id);
-      	ofstream file1(out_file, ios::out | ios::app);
+      	/*//ofstream file1(out_file, ios::out | ios::app);
+        FILE *file1=fopen(out_file, "r+");
+        */
 	if(head!=recv_window.end())
 	{
 	        //handle_timer((void*)1);
@@ -579,17 +582,18 @@ void Host:: recv_window_sync(DTPPacket* pkt)
         	        TRACE(TRL3,"Received packet at DTP-Host: %d\n",address());
         	        ((DTPPacket*)pkt)->print();
         	        //int i=0;
-        	        if (file1.is_open())
+        	        /*if (file1)//.is_open())
         	        {
         	               int i=0;
         	               int leng=(pkt_recv->length)-HEADER_SIZE;
         	               // cout<<"hh"<<endl;
         	               for(i=0;i<leng;i++)
         	               {               
-        	                        file1.put(pkt_recv->data[i]);
+        	                        fprintf(file1,"%02x ", (unsigned char) pkt_recv->data[i]);
+        	                        //file1.put(pkt_recv->data[i]);
         	                        //  i++;
         	               }
-        	        }
+        	        }*/
                 
         	        if(!recv_window.empty())
         	        {
@@ -613,14 +617,15 @@ void Host:: recv_window_sync(DTPPacket* pkt)
                 	                }
                 	                int i=0;
                 	                int leng=(pkt_iter_recv->length)-HEADER_SIZE;
-                	               // cout<<"hh"<<endl;
+                	               /*// cout<<"hh"<<endl;
                 	                for(i=0;i<leng;i++)
                 	                {
-                	                       file1.put(pkt_iter_recv->data[i]);
+                	                       fprintf(file1,"%02x ", (unsigned char) pkt_iter_recv->data[i]);
+                	                       //file1.put(pkt_iter_recv->data[i]);
                         	               //  i++;
                                         }
         	                        // file1<<pkt_iter_recv->data;
-        	                        // cout<<"bb"<<pkt_iter_recv->data<<endl;
+        	                        // cout<<"bb"<<pkt_iter_recv->data<<endl;*/
         	                        recv_window.erase(head1);
                 	                head1 =recv_window.begin();
                 	                delete pkt_iter_recv;
@@ -640,7 +645,7 @@ void Host:: recv_window_sync(DTPPacket* pkt)
 	 
 	
 	// display(recv_window);
-	 file1.close();
+	// fclose(file1);//.close();
 	 }
 	 
 	 delete  pkt_recv;

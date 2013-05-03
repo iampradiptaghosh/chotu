@@ -1,4 +1,5 @@
-diff test1 dest_test1
+diff dest_Dataset/test1.txt Dataset/dest_test1.txt
+diff dest_Dataset/test1.pdf.txt Dataset/dest_test1.pdf.txt
 diff test2 dest_test2
 diff test3 dest_test3
 diff test4 dest_test4

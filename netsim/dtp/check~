@@ -1,6 +1,7 @@
-diff test1 test1_dest
-diff test2 test2_dest
-diff test3 test3_dest
-diff test4 test4_dest
-diff test5 test5_dest
-diff test6 test6_dest
+diff dest_Dataset/test1.txt Dataset/dest_test1.txt
+diff dest_Dataset/test1.pdf.txt Dataset/dest_test1.pdf.txt
+diff test2 dest_test2
+diff test3 dest_test3
+diff test4 dest_test4
+diff test5 dest_test5
+diff test6 dest_test6

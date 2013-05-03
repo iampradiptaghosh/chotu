@@ -12,17 +12,17 @@ using namespace std;
 int main(void)
 {
         //ifstream in_file;
-        FILE *file2=fopen("Dataset/test7.pdf", "r");
+        FILE *file2=fopen("Dataset/test3.pdf", "r");
         //in_file.open ("test8", ios::in); 
 	char c;
 	
         int i=0;
-	FILE *file1=fopen("Dataset/dest_test7.pdf.txt", "w+");
+	FILE *file1=fopen("Dataset/dest_test3.pdf.txt", "w+");
 	c=fgetc(file2);
 	while(!feof(file2))//feof(file2))
 	{
 	      
-	       fprintf(file1,"%02x ", (unsigned char) c);//put(c);
+	       fprintf(file1,"%02x\n", (unsigned char) c);//put(c);
                 
 	       //fgets(c,100,file2);
 	       c= getc(file2);
